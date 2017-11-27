@@ -1,0 +1,30 @@
+"""The Pawn class"""
+
+
+class Pawn:
+    """ A pawn piece in the Tic Tac Toe game. """
+
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a marker.
+        :param str name: the player's name
+        :param str marker: the marker to use on the board
+        """
+        self.__owner = owner  # type: Player
+
+    def __str__(self):
+        """
+        Returns a simple string representation of the player, ie, the player name.
+        :return:
+        """
+        return "{}'s Pawn".format(self.owner)
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
