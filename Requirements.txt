@@ -1,0 +1,28 @@
+Functional Requirements:
+The Chess program
+- Shall create a game board class to track the position of each piece object using a 9 x 9 nested list:
+    - Shall create and position each player's pieces at the start of the game
+    - Shall track the current player for each turn
+    - Shall record each player's moves
+    - Shall check the board for the presence of friendly or enemy players at any given position
+    - Shall eliminate a piece when the opposing player moves onto that position
+- Shall create Pawn, Rook, Knight, Bishop, Queen, and King objects for each piece
+    - Shall contain move methods to shift each piece's position on the board
+    - Shall properly encapsulate properties to prevent illegal movements
+- Shall create a player class to track the properties of each player.
+    - Shall track each player's name, wins, and losses.
+    - Shall properly encapsulate properties to securely track each of the above properties.
+- Shall create a Board String function print a Board object to a the Chess GUI
+    - Shall not modify the Board object
+- Shall implement a main program that takes two players through a series of chess games
+    - Shall end the program when the player closes the game window or clicks "End" after a round.
+
+Advanced Features:
+The Chess Program:
+- May display a player's possible moves for a piece when the mouse clicks on that piece, or when the
+  mouse hovers over the piece.
+- May display messages regarding the winner, loser, and number of turns or rounds.
+
+Notes:
+- Will not detect Check/Checkmate - Self-enforcement expected from the users
+- Code template found on the PEX5_Chess.py file.
