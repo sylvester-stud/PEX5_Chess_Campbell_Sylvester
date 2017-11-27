@@ -1,74 +1,109 @@
-#!/usr/bin/env python3
-"""
-This program creates a Chess game using the python console and object oriented programming concepts.
-
-The game will use 8 classes involving the game, the pieces, and the player
-CS 210, Introduction to Programming
-"""
-
-__author__ = "Cage Campbell & Christian Sylvester"  # Your name. Ex: John Doe
-__section__ = "M6"  # Your section. Ex: M1
-__instructor__ = "Dr. Bower"  # Your instructor. Ex: Lt Col Doe
-__date__ = "05 Dec 2017"  # Today's date. Ex: 25 Dec 2017
-__documentation__ = """ None """  # Multiple lines OK with triple quotes
+"""The TicTacToe class"""
 
 
-def main():
-    """
-    Contains the main program for the PEX
-    """
+class TicTacToe:
+    """ A Tic Tac Toe game model """
 
+    def __init__(self, player1, player2):
+        """
+        Initializes a new TicTacToe game.
+        :param Player player1:
+        :param Player player2:
+        """
+        self.__board = [[None for _ in range(8)] for __ in range(8)]  # type: list[list[]]
+        self.__players = (player1, player2)  # type: tuple[Player]
+        self.__current_player_index = 0  # type: int
 
-def Chess_String(Board):
-    """ Prints a Chess Board using information from the Board object."""
+    @property
+    def current_player(self):
+        """
+        Returns the current player
+        :return:
+        :rtype: Player
+        """
+        return self.__players[self.__current_player_index]
 
+    @property
+    def players(self):
+        """
+        Returns a list of players for the current game.
+        This is a copy of the internal list, so you do not
+        have to worry about messing up the list.
+        :return: list of players
+        :rtype: Tuple[Player]
+        """
+        return tuple(self.__players)
 
-class Chess_Board():
-    """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
+    @property
+    def turns_played(self):
+        """
+        Returns the number of valid turns played on this board, 0..9
+        :return: number of valid turns
+        :rtype: int
+        """
+        count = 0
+        for row in self.__board:
+            for person in row:
+                if person is not None:
+                    count += 1
+        return count
 
+    @property
+    def winner(self):
+        """
+        Returns the winner of a game or None if the game is
+        not yet over or there is a tie.
+        :return:
+        :rtype: Player
+        """
+        # Check rows
+        for row in self.__board:
+            if len(set(row)) == 1 and row[0] is not None:
+                return row[0]
 
-class Player():
-    """ Tracks the properties of each player."""
+        # Check columns
+        for c in range(1, 4):  # columns
+            p = self.player_at(1, c)
+            if self.player_at(2, c) == p and self.player_at(3, c) == p:
+                return p
 
+        # Check diagonals
+        p = self.player_at(2, 2)
 
-class Pawn():
-    """ Creates a Pawn object."""
+        # Left to right
+        if self.player_at(1, 1) == p and self.player_at(3, 3) == p:
+            return p
 
+        # Right to left
+        if self.player_at(1, 3) == p and self.player_at(3, 1) == p:
+            return p
 
-class Rook():
-    """ Creates a Rook object."""
+        return None  # No winner
 
+    @property
+    def loser(self):
+        """
+        Returns the loser of a game or None if the game is
+        not yet over or there is a tie.
+        :return:
+        :rtype: Player
+        """
+        winner = self.winner  # Put most of the logic here
+        if winner is None:
+            return None
 
-class Knight():
-    """ Creates a Knight object."""
+        temp = list(self.players)
+        temp.remove(winner)
+        return temp[0]
 
+    def play_move(self, row, col):
+        row_index = row - 1
+        col_index = col - 1
 
-class Bishop():
-    """ Creates a Bishop object."""
+        self.__board[row_index][col_index] = self.current_player
+        self.__current_player_index = (self.__current_player_index + 1) % 2
 
-
-class Queen():
-    """ Creates a Queen object."""
-
-
-class King():
-    """ Creates a King object."""
-
-
-# ---DO NOT EDIT---
-if __name__ == "__main__":
-    print(__doc__.strip())
-    b = b'CmltcG9ydCBnZXRwYXNzLCBoYXNobGliLCBjb2RlY3MsIHN0cmluZyBhcyBfX1MKdSA9IGdldHBhc3MuZ2V0dXNlcigpCmggPSBoYXN' + \
-        b'obGliLnNoYTI1Nih1LmVuY29kZSgpKS5oZXhkaWdlc3QoKQpyID0gY29kZWNzLmVuY29kZSh1Lmxvd2VyKCkudHJhbnNsYXRlKHtvcm' + \
-        b'Qoayk6IE5vbmUgZm9yIGsgaW4gX19TLmRpZ2l0c30pLnJlcGxhY2UoJy4nLCcnKSwgJ3JvdF8xMycpCndpdGggb3BlbihfX2ZpbGVfX' + \
-        b'ywgInIiKSBhcyBmOgogICAgaWYgaCBub3QgaW4gZi5yZWFkKCk6CiAgICAgICAgd2l0aCBvcGVuKF9fZmlsZV9fLCAiYSIpIGFzIGY6' + \
-        b'CiAgICAgICAgICAgIHByaW50KCIjIiwgaCwgciwgZmlsZT1mKQo='
-    try:
-        import base64
-
-        eval(compile(base64.b64decode(b), '<string>', "exec"))
-    except:
-        pass
-    finally:
-        main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
-# 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 ppntrpnzcoryy
+    def player_at(self, row, col):
+        row_index = row - 1
+        col_index = col - 1
+        return self.__board[row_index][col_index]
