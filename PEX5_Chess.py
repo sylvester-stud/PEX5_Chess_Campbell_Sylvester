@@ -94,9 +94,12 @@ __documentation__ = """ None """  # Multiple lines OK with triple quotes
 
 from chess_gui import ChessApp
 
+
 def main():
     app = ChessApp()
     app.window.mainloop()
+
+# Test input.
 
 if __name__ == "__main__":
     main()
