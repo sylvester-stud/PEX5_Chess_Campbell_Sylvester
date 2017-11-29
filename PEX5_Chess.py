@@ -18,40 +18,103 @@ def main():
     Contains the main program for the PEX
     """
 
+    player1 = Player("Name1", "White")
+    player2 = Player("Opponent", "Black")
+    game_board = Board(player1, player2)
+    print(game_board.board)
 
-def Chess_String(Board):
+
+def Chess_String(board):
     """ Prints a Chess Board using information from the Board object."""
 
 
-class Chess_Board():
+class Board:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
+    def __init__(self, player1, player2):
+        self.player1 = player1
+        self.player2 = player2
+        pawn1 = Pawn(player1)
+        pawn2 = Pawn(player2)
+        self.board = [(), (), (), (), (), (), (), (), ()] * 9
+        for i in range(9, 18):
+            self.board[i] = pawn1.type()
+        for i in range(63, 72):
+            self.board[i] = pawn2.type()
 
 
-class Player():
+class Player:
     """ Tracks the properties of each player."""
 
+    def __init__(self, name, color):
+        self.__name = name
+        self.__color = color
 
-class Pawn():
-    """ Creates a Pawn object."""
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        return self.__name
+
+    def color(self):
+        return self.__color
+
+    def switch_colors(self):
+        if self.color == "Black":
+            self.__color = "White"
+        else:
+            self.__color = "White"
 
 
-class Rook():
+class Pawn:
+    """ A pawn piece in the Chess game. """
+
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a color.
+        :param str name: the player's name
+        :param str color: the player's color
+        """
+        self.__owner = owner  # type: Player
+        self.__type = "Pawn"
+
+    def __str__(self):
+        """
+        Returns a simple string representation of the player, ie, the player name.
+        :return:
+        """
+        return "{}'s Pawn".format(self.owner)
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
+    def type(self):
+        return self.__type
+
+
+class Rook:
     """ Creates a Rook object."""
 
 
-class Knight():
+class Knight:
     """ Creates a Knight object."""
 
 
-class Bishop():
+class Bishop:
     """ Creates a Bishop object."""
 
 
-class Queen():
+class Queen:
     """ Creates a Queen object."""
 
 
-class King():
+class King:
     """ Creates a King object."""
 
 
