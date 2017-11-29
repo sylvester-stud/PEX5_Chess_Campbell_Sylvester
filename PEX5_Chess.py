@@ -33,13 +33,20 @@ class Board:
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
-        pawn1 = Pawn(player1)
-        pawn2 = Pawn(player2)
+
+        pawns1_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        p1_pawns = {}
+        for name in pawns1_list:
+            p1_pawns[name] = Pawn(player1)
+        p2_pawns = {}
+        for name in pawns1_list:
+            p2_pawns[name] = Pawn(player1)
+
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
-            self.board[i] = pawn1.type()
+            self.board[i] = p1_pawns[i-9].type()
         for i in range(63, 72):
-            self.board[i] = pawn2.type()
+            self.board[i] = p2_pawns[i-63].type()
 
 
 class Player:
