@@ -6,11 +6,11 @@ The game will use 8 classes involving the game, the pieces, and the player
 CS 210, Introduction to Programming
 """
 
-__author__ = "Cage Campbell & Christian Sylvester"  # Your name. Ex: John Doe
-__section__ = "M6"  # Your section. Ex: M1
-__instructor__ = "Dr. Bower"  # Your instructor. Ex: Lt Col Doe
-__date__ = "05 Dec 2017"  # Today's date. Ex: 25 Dec 2017
-__documentation__ = """ None """  # Multiple lines OK with triple quotes
+__author__ = "Cage Campbell & Christian Sylvester"
+__section__ = "M6"
+__instructor__ = "Dr. Bower"
+__date__ = "05 Dec 2017"
+__documentation__ = """ None """
 
 
 def main():
@@ -55,6 +55,8 @@ class Player:
     def __init__(self, name, color):
         self.__name = name
         self.__color = color
+        self.__wins = 0
+        self.__losses = 0
 
     def __str__(self):
         return self.name
