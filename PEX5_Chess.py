@@ -25,13 +25,14 @@ def main():
     print(game_board.board)
     print(game_board.board[9].type())
     print(game_board.board[9].owner)
+    game_board.board[9].move()
 
 
-def Chess_String(board):
+def chess_string(board):
     """ Prints a Chess Board using information from the Board object."""
 
 
-class Board:
+class Chess:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
     def __init__(self, player1, player2):
         self.player1 = player1
@@ -102,6 +103,15 @@ class Pawn:
     def type(self):
         return self.__type
 
+    def move(self, location, game, click):
+        if game.board[location] is type(Pawn):
+            if click == location + 9:
+                game.board.insert(location + 9, game.board.pop(location))
+            elif click == location + 18:
+                game.board.insert(location + 18, game.board.pop(location))
+            else:
+                pass
+
 
 class Rook:
     """ Creates a Rook object."""
@@ -113,6 +123,29 @@ class Knight:
 
 class Bishop:
     """ Creates a Bishop object."""
+
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a color.
+        :param str name: the player's name
+        :param str color: the player's color
+        """
+        self.__owner = owner  # type: Player
+        self.__type = "Bishop"
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
+    def type(self):
+        return self.__type
+
+
 
 
 class Queen:
