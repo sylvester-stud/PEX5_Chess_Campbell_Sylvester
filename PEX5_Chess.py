@@ -19,9 +19,11 @@ def main():
     """
 
     player1 = Player("Name1", "White")
-    player2 = Player("Opponent", "Black")
+    player2 = Player("Name2", "Black")
     game_board = Board(player1, player2)
     print(game_board.board)
+    print(game_board.board[9].type())
+    print(game_board.board[9].owner)
 
 
 def Chess_String(board):
@@ -44,9 +46,9 @@ class Board:
 
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
-            self.board[i] = p1_pawns[i-9].type()
+            self.board[i] = p1_pawns[i-9]
         for i in range(63, 72):
-            self.board[i] = p2_pawns[i-63].type()
+            self.board[i] = p2_pawns[i-63]
 
 
 class Player:
@@ -86,13 +88,6 @@ class Pawn:
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
-
-    def __str__(self):
-        """
-        Returns a simple string representation of the player, ie, the player name.
-        :return:
-        """
-        return "{}'s Pawn".format(self.owner)
 
     @property
     def owner(self):
