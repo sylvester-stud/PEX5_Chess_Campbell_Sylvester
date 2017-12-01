@@ -32,25 +32,39 @@ def chess_string(board):
     """ Prints a Chess Board using information from the Board object."""
 
 
-class Chess:
+class Board:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
 
+        # Pawn initialization
         pawns1_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         p1_pawns = {}
         for name in pawns1_list:
             p1_pawns[name] = Pawn(player1)
         p2_pawns = {}
         for name in pawns1_list:
-            p2_pawns[name] = Pawn(player1)
+            p2_pawns[name] = Pawn(player2)
+        # Rook initialization
+        rooks_list = [0, 8]
+        p1_rooks = []
+        for name in rooks_list:
+            p1_rooks.append(Rook(player1))
+        p2_rooks = []
+        for name in rooks_list:
+            p2_rooks.append(Rook(player2))
 
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
             self.board[i] = p1_pawns[i-9]
         for i in range(63, 72):
             self.board[i] = p2_pawns[i-63]
+        # Rook Placement
+        self.board[0] = p1_rooks[0]
+        self.board[8] = p1_rooks[1]
+        self.board[72] = p2_rooks[0]
+        self.board[80] = p2_rooks[1]
 
 
 class Player:
