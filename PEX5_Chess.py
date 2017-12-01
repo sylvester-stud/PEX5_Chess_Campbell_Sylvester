@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-This is a test
 This program creates a Chess game using the python console and object oriented programming concepts.
 
 The game will use 8 classes involving the game, the pieces, and the player
@@ -35,19 +34,33 @@ class Board:
         self.player1 = player1
         self.player2 = player2
 
+        # Pawn initialization
         pawns1_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         p1_pawns = {}
         for name in pawns1_list:
             p1_pawns[name] = Pawn(player1)
         p2_pawns = {}
         for name in pawns1_list:
-            p2_pawns[name] = Pawn(player1)
+            p2_pawns[name] = Pawn(player2)
+        # Rook initialization
+        rooks_list = [0, 8]
+        p1_rooks = []
+        for name in rooks_list:
+            p1_rooks.append(Rook(player1))
+        p2_rooks = []
+        for name in rooks_list:
+            p2_rooks.append(Rook(player2))
 
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
-            self.board[i] = p1_pawns[i-9].type()
+            self.board[i] = p1_pawns[i-9]
         for i in range(63, 72):
-            self.board[i] = p2_pawns[i-63].type()
+            self.board[i] = p2_pawns[i-63]
+        # Rook Placement
+        self.board[0] = p1_rooks[0]
+        self.board[8] = p1_rooks[1]
+        self.board[72] = p2_rooks[0]
+        self.board[80] = p2_rooks[1]
 
 
 class Player:
@@ -88,13 +101,6 @@ class Pawn:
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
 
-    def __str__(self):
-        """
-        Returns a simple string representation of the player, ie, the player name.
-        :return:
-        """
-        return "{}'s Pawn".format(self.owner)
-
     @property
     def owner(self):
         """
@@ -110,6 +116,24 @@ class Pawn:
 
 class Rook:
     """ Creates a Rook object."""
+    def __init__(self, owner):
+        """
+
+        :return:
+        """
+        self.__owner = owner
+        self.__type = "Rook"
+
+    @property
+    def type(self):
+        return self.__type
+
+    def __move__(self):
+        """
+
+        :return:
+        """
+        pass
 
 
 class Knight:
