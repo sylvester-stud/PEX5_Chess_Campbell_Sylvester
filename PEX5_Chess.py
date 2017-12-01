@@ -128,12 +128,15 @@ class Rook:
     def type(self):
         return self.__type
 
-    def __move__(self):
+    def move(self, location, game, click):
         """
 
         :return:
         """
-        pass
+        if game.board[location] is type(Rook):
+            if click - location % 9 == 0:
+                pass
+
 
 
 class Knight:
