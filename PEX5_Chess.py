@@ -129,6 +129,24 @@ class Pawn:
 
 class Rook:
     """ Creates a Rook object."""
+    def __init__(self, owner):
+        """
+
+        :return:
+        """
+        self.__owner = owner
+        self.__type = "Rook"
+
+    @property
+    def type(self):
+        return self.__type
+
+    def __move__(self):
+        """
+
+        :return:
+        """
+        pass
 
 
 class Knight:
