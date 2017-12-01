@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+This is a test
 This program creates a Chess game using the python console and object oriented programming concepts.
 
 The game will use 8 classes involving the game, the pieces, and the player
