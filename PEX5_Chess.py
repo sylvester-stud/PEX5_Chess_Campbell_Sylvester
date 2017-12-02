@@ -22,14 +22,19 @@ def main():
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
     print(game_board.board)
+    game_board.board[10].move(19, game_board, 10)
+    print(game_board.board)
+    game_board.board[0].move(0, game_board, 54)
+    print(game_board.board)
 
 
-def Chess_String(board):
+def chess_string(board):
     """ Prints a Chess Board using information from the Board object."""
 
 
 class Board:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
+
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
@@ -53,9 +58,9 @@ class Board:
 
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
-            self.board[i] = p1_pawns[i-9]
+            self.board[i] = p1_pawns[i - 9]
         for i in range(63, 72):
-            self.board[i] = p2_pawns[i-63]
+            self.board[i] = p2_pawns[i - 63]
         # Rook Placement
         self.board[0] = p1_rooks[0]
         self.board[8] = p1_rooks[1]
@@ -113,9 +118,18 @@ class Pawn:
     def type(self):
         return self.__type
 
+    def move(self, click, game, location):
+        if (click - location) % 9 == 0:
+            game.board.insert(click, game.board.pop(location))
+        elif location % 9 - click % 9 < 9:
+            game.board.insert(click, game.board.pop(location))
+        else:
+            pass
+
 
 class Rook:
     """ Creates a Rook object."""
+
     def __init__(self, owner):
         """
 
@@ -133,10 +147,14 @@ class Rook:
 
         :return:
         """
-        if game.board[location] is type(Rook):
-            if click - location % 9 == 0:
-                pass
-
+        if (click - location) % 9 == 0:
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
+        elif location % 9 - click % 9 < 9:
+            game.board.insert(click, game.board.pop(location))
+        else:
+            pass
 
 
 class Knight:
