@@ -90,7 +90,7 @@ class Player:
         if self.color == "Black":
             self.__color = "White"
         else:
-            self.__color = "White"
+            self.__color = "Black"
 
 
 class Pawn:
