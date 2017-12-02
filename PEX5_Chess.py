@@ -26,6 +26,7 @@ def main():
     print(game_board.board)
     game_board.board[0].move(0, game_board, 54)
     print(game_board.board)
+    game_board.print_board()
 
 
 def chess_string(board):
@@ -66,6 +67,17 @@ class Board:
         self.board[8] = p1_rooks[1]
         self.board[72] = p2_rooks[0]
         self.board[80] = p2_rooks[1]
+
+    def print_board(self):
+        print(self.board[0:9])
+        print(self.board[10:18])
+        print(self.board[29:27])
+        print(self.board[28:36])
+        print(self.board[37:45])
+        print(self.board[46:54])
+        print(self.board[55:63])
+        print(self.board[64:72])
+        print(self.board[73:83])
 
 
 class Player:
@@ -120,9 +132,13 @@ class Pawn:
 
     def move(self, click, game, location):
         if (click - location) % 9 == 0:
-            game.board.insert(click, game.board.pop(location))
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
         elif location % 9 - click % 9 < 9:
-            game.board.insert(click, game.board.pop(location))
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
         else:
             pass
 
@@ -152,7 +168,9 @@ class Rook:
             game.board.insert(location, ())
             game.board.insert(click, piece)
         elif location % 9 - click % 9 < 9:
-            game.board.insert(click, game.board.pop(location))
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
         else:
             pass
 
