@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-This is a test
 This program creates a Chess game using the python console and object oriented programming concepts.
 
 The game will use 8 classes involving the game, the pieces, and the player
@@ -13,44 +12,69 @@ __instructor__ = "Dr. Bower"
 __date__ = "05 Dec 2017"
 __documentation__ = """ None """
 
-"""test"""
+
 def main():
     """
     Contains the main program for the PEX
     """
 
     player1 = Player("Name1", "White")
-    player2 = Player("Name2", "Black")
+    player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
     print(game_board.board)
-    print(game_board.board[9].type())
-    print(game_board.board[9].owner)
-    game_board.board[9].move()
+    game_board.board[9].move(18, game_board, 9)
+    print(game_board.print_board())
 
 
 def chess_string(board):
     """ Prints a Chess Board using information from the Board object."""
 
 
-class Chess:
+class Board:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
+
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
 
+        # Pawn initialization
         pawns1_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         p1_pawns = {}
         for name in pawns1_list:
             p1_pawns[name] = Pawn(player1)
         p2_pawns = {}
         for name in pawns1_list:
-            p2_pawns[name] = Pawn(player1)
+            p2_pawns[name] = Pawn(player2)
+        # Rook initialization
+        rooks_list = [0, 8]
+        p1_rooks = []
+        for name in rooks_list:
+            p1_rooks.append(Rook(player1))
+        p2_rooks = []
+        for name in rooks_list:
+            p2_rooks.append(Rook(player2))
 
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
-            self.board[i] = p1_pawns[i-9]
+            self.board[i] = p1_pawns[i - 9]
         for i in range(63, 72):
-            self.board[i] = p2_pawns[i-63]
+            self.board[i] = p2_pawns[i - 63]
+        # Rook Placement
+        self.board[0] = p1_rooks[0]
+        self.board[8] = p1_rooks[1]
+        self.board[72] = p2_rooks[0]
+        self.board[80] = p2_rooks[1]
+
+    def print_board(self):
+        print(self.board[0:9])
+        print(self.board[9:18])
+        print(self.board[18:27])
+        print(self.board[27:36])
+        print(self.board[36:45])
+        print(self.board[45:54])
+        print(self.board[54:63])
+        print(self.board[63:72])
+        print(self.board[72:81])
 
 
 class Player:
@@ -103,18 +127,53 @@ class Pawn:
     def type(self):
         return self.__type
 
-    def move(self, location, game, click):
-        if game.board[location] is type(Pawn):
-            if click == location + 9:
-                game.board.insert(location + 9, game.board.pop(location))
-            elif click == location + 18:
-                game.board.insert(location + 18, game.board.pop(location))
-            else:
-                pass
+    def move(self, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+        :param int click: The tile number of the desired space to move to (clicked tile).
+        :param Board game: The game in which to move the pawn.
+        :param int location: The tile number of the current location.
+        """
+        pawn = game.board.pop(location)
+        if (click - location) % 9 == 0:
+            game.board.insert(location, ())
+            game.board.insert(click, pawn)
+        elif location % 9 - click % 9 < 9:
+            game.board.insert(location, ())
+            game.board.insert(click, pawn)
+        else:
+            pass
 
 
 class Rook:
     """ Creates a Rook object."""
+
+    def __init__(self, owner):
+        """
+
+        :return:
+        """
+        self.__owner = owner
+        self.__type = "Rook"
+
+    @property
+    def type(self):
+        return self.__type
+
+    def move(self, location, game, click):
+        """
+
+        :return:
+        """
+        if (click - location) % 9 == 0:
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
+        elif location % 9 - click % 9 < 9:
+            piece = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board.insert(click, piece)
+        else:
+            pass
 
 
 class Knight:
@@ -123,29 +182,6 @@ class Knight:
 
 class Bishop:
     """ Creates a Bishop object."""
-
-    def __init__(self, owner):
-        """
-        Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
-        """
-        self.__owner = owner  # type: Player
-        self.__type = "Bishop"
-
-    @property
-    def owner(self):
-        """
-        Returns the owner of the pawn
-        :return: the owner
-        :rtype: Player
-        """
-        return self.__owner
-
-    def type(self):
-        return self.__type
-
-
 
 
 class Queen:
@@ -173,3 +209,4 @@ if __name__ == "__main__":
     finally:
         main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
 # 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 ppntrpnzcoryy
+
