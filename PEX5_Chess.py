@@ -14,7 +14,8 @@ __documentation__ = """ None """
 
 import math
 
-""" Pawn move function complete (minus kills), print board in board class complete and functioning."""
+"""Classes nearly complete; provisions needed for killing other pieces, and not letting pieces move through(wrap 
+   around)borders. Other things needed: GUI/Adv. features (if desired)."""
 
 
 def main():
@@ -25,8 +26,7 @@ def main():
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
-    game_board.board[10].move(player1, 24, game_board, 8)
-    game_board.board[2].move(player1, 38, game_board, 2)
+    # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
 
 
@@ -72,9 +72,17 @@ class Board:
 
         # Bishop Initialization/Placement
         self.board[2] = Bishop(player1)
-        self.board[6] = Bishop(player1)
+        self.board[5] = Bishop(player1)
         self.board[58] = Bishop(player2)
         self.board[61] = Bishop(player2)
+
+        # Queen Initialization/Placement
+        self.board[4] = Queen(player1)
+        self.board[59] = Queen(player2)
+
+        # King Initialization/Placement
+        self.board[3] = King(player1)
+        self.board[60] = King(player2)
 
     @property
     def current_player(self):
@@ -191,14 +199,10 @@ class Rook:
 
         :return:
         """
-        if (click - location) % 9 == 0:
-            piece = game.board.pop(location)
+        if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8:
+            rook = game.board.pop(location)
             game.board.insert(location, ())
-            game.board.insert(click, piece)
-        elif location % 9 - click % 9 < 9:
-            piece = game.board.pop(location)
-            game.board.insert(location, ())
-            game.board.insert(click, piece)
+            game.board[click] = rook
         else:
             pass
 
@@ -292,12 +296,101 @@ class Bishop:
         else:
             pass
 
+
 class Queen:
     """ Creates a Queen object."""
+
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a color.
+        :param str name: the player's name
+        :param str color: the player's color
+        """
+        self.__owner = owner  # type: Player
+        self.__type = "Queen"
+        self.__color = owner.color()
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
+    def type(self):
+        return self.__type
+
+    def color(self):
+        return self.__color
+
+    def move(self, player, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+        :param Player player: The player moving.
+        :param int click: The tile number of the desired space to move to (clicked tile).
+        :param Board game: The game in which to move the pawn.
+        :param int location: The tile number of the current location.
+        """
+        queen = game.board[location]
+        if game.current_player is player and player.color() is queen.color():
+            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or (
+                        click - location) % 7 == 0:
+                queen = game.board.pop(location)
+                game.board.insert(location, ())
+                game.board[click] = queen
+        else:
+            pass
 
 
 class King:
     """ Creates a King object."""
+
+
+class King:
+    """ Creates a Bishop object."""
+
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a color.
+        :param str name: the player's name
+        :param str color: the player's color
+        """
+        self.__owner = owner  # type: Player
+        self.__type = "King"
+        self.__color = owner.color()
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
+    def type(self):
+        return self.__type
+
+    def color(self):
+        return self.__color
+
+    def move(self, player, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+        :param Player player: The player moving.
+        :param int click: The tile number of the desired space to move to (clicked tile).
+        :param Board game: The game in which to move the pawn.
+        :param int location: The tile number of the current location.
+        """
+        king = game.board[location]
+        if game.current_player is player and player.color() is king.color():
+            if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
+                    click - location) == 8 or math.fabs(click - location) == 9:
+                king = game.board.pop(location)
+                game.board.insert(location, ())
+                game.board[click] = king
+        else:
+            pass
 
 
 # ---DO NOT EDIT---
