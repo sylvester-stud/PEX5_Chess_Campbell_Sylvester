@@ -137,8 +137,7 @@ class Pawn:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param str owner: The player who owns the pawn.
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
@@ -345,10 +344,6 @@ class Queen:
 
 class King:
     """ Creates a King object."""
-
-
-class King:
-    """ Creates a Bishop object."""
 
     def __init__(self, owner):
         """
