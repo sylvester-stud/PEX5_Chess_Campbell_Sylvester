@@ -26,7 +26,7 @@ def main():
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
     game_board.board[10].move(player1, 24, game_board, 8)
-    game_board.board[1].move(player1, 18, game_board, 1)
+    game_board.board[2].move(player1, 38, game_board, 2)
     print(game_board.print_board())
 
 
@@ -69,6 +69,12 @@ class Board:
         self.board[6] = Knight(player1)
         self.board[57] = Knight(player2)
         self.board[62] = Knight(player2)
+
+        # Bishop Initialization/Placement
+        self.board[2] = Bishop(player1)
+        self.board[6] = Bishop(player1)
+        self.board[58] = Bishop(player2)
+        self.board[61] = Bishop(player2)
 
     @property
     def current_player(self):
@@ -245,6 +251,46 @@ class Knight:
 class Bishop:
     """ Creates a Bishop object."""
 
+    def __init__(self, owner):
+        """
+        Initializes a new Player with a name and a color.
+        :param str name: the player's name
+        :param str color: the player's color
+        """
+        self.__owner = owner  # type: Player
+        self.__type = "Bishop"
+        self.__color = owner.color()
+
+    @property
+    def owner(self):
+        """
+        Returns the owner of the pawn
+        :return: the owner
+        :rtype: Player
+        """
+        return self.__owner
+
+    def type(self):
+        return self.__type
+
+    def color(self):
+        return self.__color
+
+    def move(self, player, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+        :param Player player: The player moving.
+        :param int click: The tile number of the desired space to move to (clicked tile).
+        :param Board game: The game in which to move the pawn.
+        :param int location: The tile number of the current location.
+        """
+        bishop = game.board[location]
+        if game.current_player is player and player.color() is bishop.color():
+            if (click - location) % 9 == 0 or (click - location) % 7 == 0:
+                bishop = game.board.pop(location)
+                game.board.insert(location, ())
+                game.board[click] = bishop
+        else:
+            pass
 
 class Queen:
     """ Creates a Queen object."""
