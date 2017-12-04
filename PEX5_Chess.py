@@ -12,6 +12,8 @@ __instructor__ = "Dr. Bower"
 __date__ = "05 Dec 2017"
 __documentation__ = """ None """
 
+import math
+
 
 def main():
     """
@@ -21,7 +23,7 @@ def main():
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
-
+    game_board.board[9].move(player1, 27, game_board, 9)
     print(game_board.print_board())
 
 
@@ -108,6 +110,12 @@ class Player:
     def color(self):
         return self.__color
 
+    def wins(self):
+        return self.__wins
+
+    def losses(self):
+        return self.losses()
+
 
 class Pawn:
     """ A pawn piece in the Chess game. """
@@ -120,6 +128,7 @@ class Pawn:
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
+        self.__played = False  # tracks whether or not a pawn has moved (first move can be up to two spaces)
         self.__color = owner.color()
 
     @property
@@ -145,16 +154,15 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]
-        if game.current_player is player and player.color() is pawn.color():
-            pawn = game.board.pop(location)
-            if (click - location) % 9 == 0:
+        if game.current_player is player and player.color() is pawn.color() and (click - location) % 9 == 0:
+            if self.__played is False and math.fabs(click - location) == 18 or player.color() == "White" and click - \
+                    location == 9 or player.color() == "Black" and location - click == 9:
+                pawn = game.board.pop(location)
                 game.board.insert(location, ())
-                game.board.insert(click, pawn)
-            elif location % 9 - click % 9 < 9:
-                game.board.insert(location, ())
-                game.board.insert(click, pawn)
-            else:
-                pass
+                game.board[click] = pawn
+                self.__played = True
+        else:
+            pass
 
 
 class Rook:
@@ -222,4 +230,3 @@ if __name__ == "__main__":
     finally:
         main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
 # 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 ppntrpnzcoryy
-
