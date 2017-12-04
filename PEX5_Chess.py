@@ -14,6 +14,7 @@ __documentation__ = """ None """
 
 import math
 
+""" Pawn move function complete (minus kills), print board in board class complete and functioning."""
 
 def main():
     """
