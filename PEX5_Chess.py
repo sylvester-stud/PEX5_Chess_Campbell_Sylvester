@@ -13,6 +13,7 @@ __date__ = "05 Dec 2017"
 __documentation__ = """ None """
 
 import math
+import tkinter as tk
 
 """Classes nearly complete; provisions needed for killing other pieces, and not letting pieces move through(wrap 
    around)borders. Other things needed: GUI/Adv. features (if desired)."""
@@ -23,6 +24,8 @@ def main():
     Contains the main program for the PEX
     """
 
+    program = DrawChessBoard()
+    program.window.mainloop()
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
@@ -30,8 +33,47 @@ def main():
     print(game_board.print_board())
 
 
-def chess_string(board):
-    """ Prints a Chess Board using information from the Board object."""
+class DrawChessBoard:
+    """ An App that serves as the GUI for a Chess game. """
+
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Chess")
+
+        # View / Control
+        self.canvas = None  # type: tk.Canvas
+        self.create_widgets()
+
+    def mouse_click(self):
+        cv = self.Canvas()
+
+    def create_widgets(self):
+        lbl = tk.Label(self.window, text="Chess Board")
+        lbl.pack()
+
+        # Canvas
+        self.canvas = tk.Canvas(self.window, bg="white")
+        self.canvas.pack(fill=tk.BOTH)
+        self.create_canvas()
+
+    def create_canvas(self):
+        self.canvas.config(width=600, height=600)
+        width = int(self.canvas["width"]) + 2
+        height = int(self.canvas["height"]) + 2
+        color = "White"
+        for r in range(8):
+            for n in range(8):
+                self.canvas.create_rectangle((n * width // 8), r * height // 8, (n + 1) * width // 8,
+                                             (r + 1) * height // 8, fill=color, outline="Black")
+                if color == "White":
+                    color = "Black"
+                else:
+                    color = "White"
+            if color == "White":
+                color = "Black"
+            else:
+                color = "White"
+            r += 1
 
 
 class Board:
@@ -380,7 +422,7 @@ class King:
         king = game.board[location]
         if game.current_player is player and player.color() is king.color():
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
-                    click - location) == 8 or math.fabs(click - location) == 9:
+                            click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = king
