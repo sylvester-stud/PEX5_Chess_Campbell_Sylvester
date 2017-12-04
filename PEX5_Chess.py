@@ -21,8 +21,7 @@ def main():
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
-    print(game_board.board)
-    game_board.board[9].move(18, game_board, 9)
+
     print(game_board.print_board())
 
 
@@ -36,6 +35,7 @@ class Board:
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
+        self.__current_player = player1
 
         # Pawn initialization
         pawns1_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -45,6 +45,7 @@ class Board:
         p2_pawns = {}
         for name in pawns1_list:
             p2_pawns[name] = Pawn(player2)
+
         # Rook initialization
         rooks_list = [0, 8]
         p1_rooks = []
@@ -54,6 +55,7 @@ class Board:
         for name in rooks_list:
             p2_rooks.append(Rook(player2))
 
+        # Pawn Placement
         self.board = [(), (), (), (), (), (), (), (), ()] * 9
         for i in range(9, 18):
             self.board[i] = p1_pawns[i - 9]
@@ -64,6 +66,16 @@ class Board:
         self.board[8] = p1_rooks[1]
         self.board[72] = p2_rooks[0]
         self.board[80] = p2_rooks[1]
+
+    @property
+    def current_player(self):
+        return self.__current_player
+
+    def new_turn(self):
+        if self.__current_player == self.player1:
+            self.__current_player = self.player2
+        else:
+            self.__current_player = self.player1
 
     def print_board(self):
         print(self.board[0:9])
@@ -96,12 +108,6 @@ class Player:
     def color(self):
         return self.__color
 
-    def switch_colors(self):
-        if self.color == "Black":
-            self.__color = "White"
-        else:
-            self.__color = "White"
-
 
 class Pawn:
     """ A pawn piece in the Chess game. """
@@ -114,6 +120,7 @@ class Pawn:
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
+        self.__color = owner.color()
 
     @property
     def owner(self):
@@ -127,21 +134,27 @@ class Pawn:
     def type(self):
         return self.__type
 
-    def move(self, click, game, location):
+    def color(self):
+        return self.__color
+
+    def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
+        :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
         :param Board game: The game in which to move the pawn.
         :param int location: The tile number of the current location.
         """
-        pawn = game.board.pop(location)
-        if (click - location) % 9 == 0:
-            game.board.insert(location, ())
-            game.board.insert(click, pawn)
-        elif location % 9 - click % 9 < 9:
-            game.board.insert(location, ())
-            game.board.insert(click, pawn)
-        else:
-            pass
+        pawn = game.board[location]
+        if game.current_player is player and player.color() is pawn.color():
+            pawn = game.board.pop(location)
+            if (click - location) % 9 == 0:
+                game.board.insert(location, ())
+                game.board.insert(click, pawn)
+            elif location % 9 - click % 9 < 9:
+                game.board.insert(location, ())
+                game.board.insert(click, pawn)
+            else:
+                pass
 
 
 class Rook:
