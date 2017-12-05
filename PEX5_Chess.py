@@ -239,7 +239,28 @@ class Pawn:
         pawn = game.board[location]  # type: Pawn
         if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
             if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
-                    location == 8 or player.color() == "Black" and location - click == 8:
+                    location == 8 or player.color() == "Black" and location - click == 8 and game.board[click] == ():
+                pawn = game.board.pop(location)
+                game.board.insert(location, ())
+                game.board[click] = pawn
+                self.__played = True
+        else:
+            pass
+
+    def attack(self, player, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+                :param Player player: The player moving.
+                :param int click: The tile number of the desired space to move to (clicked tile).
+                :param Board game: The game in which to move the pawn.
+                :param int location: The tile number of the current location.
+                """
+        pawn = game.board[location]  # type: Pawn
+        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
+            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
+                    location == 8 or player.color() == "Black" and location - click == 8 or\
+                            type(game.board[click]) == Pawn or type(game.board[click]) == Rook or\
+                            type(game.board[click]) == Bishop or type(game.board[click]) == Knight or\
+                            type(game.board[click]) == Queen or type(game.board[click]) == King:
                 pawn = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = pawn
