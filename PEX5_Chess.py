@@ -163,6 +163,7 @@ class Player:
     def name(self):
         return self.__name
 
+    @property
     def color(self):
         return self.__color
 
@@ -179,7 +180,7 @@ class Pawn:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str owner: The player who owns the pawn.
+        :param Player owner: The player who owns the pawn.
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
@@ -195,9 +196,11 @@ class Pawn:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -208,7 +211,7 @@ class Pawn:
         :param Board game: The game in which to move the pawn.
         :param int location: The tile number of the current location.
         """
-        pawn = game.board[location]
+        pawn = game.board[location]  # type: Pawn
         if game.current_player is player and player.color() is pawn.color() and (click - location) % 8 == 0:
             if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
                     location == 8 or player.color() == "Black" and location - click == 8:
@@ -225,8 +228,7 @@ class Rook:
 
     def __init__(self, owner):
         """
-
-        :return:
+        :param Player owner: The owning player
         """
         self.__owner = owner
         self.__type = "Rook"
@@ -254,17 +256,16 @@ class Knight:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: the player
         """
-        self.__owner = owner  # type: Player
+        self.__owner = owner
         self.__type = "Knight"
         self.__color = owner.color()
 
     @property
     def owner(self):
         """
-        Returns the owner of the pawn
+        Returns the owner
         :return: the owner
         :rtype: Player
         """
@@ -299,8 +300,7 @@ class Bishop:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: the player who owns the bishop
         """
         self.__owner = owner  # type: Player
         self.__type = "Bishop"
@@ -344,10 +344,9 @@ class Queen:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: The owning player
         """
-        self.__owner = owner  # type: Player
+        self.__owner = owner
         self.__type = "Queen"
         self.__color = owner.color()
 
@@ -390,8 +389,7 @@ class King:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: The owning Player
         """
         self.__owner = owner  # type: Player
         self.__type = "King"
