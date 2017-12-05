@@ -238,8 +238,9 @@ class Pawn:
         """
         pawn = game.board[location]  # type: Pawn
         if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
-            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
-                    location == 8 or player.color() == "Black" and location - click == 8 and game.board[click] == ():
+            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and\
+                            click - location == 8 or player.color() == "Black" and location - click == 8 and\
+                            game.board[click] == ():
                 pawn = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = pawn
