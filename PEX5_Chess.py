@@ -72,14 +72,13 @@ class DrawChessBoard:
                     color = "White"
             if color == "White":
                 color = "Black"
-                color = "White"
             else:
-                pass
+                color = "White"
             r += 1
         # for r in range(8):
         #     for n in range(8):
         #         button = ttk.Button(command=move, cursor=True, background=color)
-        # 
+        #
         #             # (n * width // 8), r * height // 8, (n + 1) * width // 8,
         #             #                          (r + 1) * height // 8, fill=color, outline="Black")
         #         if color == "White":
@@ -202,7 +201,7 @@ class Pawn:
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
         self.__played = False  # tracks whether or not a pawn has moved (first move can be up to two spaces)
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -229,7 +228,7 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color() is pawn.color() and (click - location) % 8 == 0:
+        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
             if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
                     location == 8 or player.color() == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
@@ -277,7 +276,7 @@ class Knight:
         """
         self.__owner = owner
         self.__type = "Knight"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -302,7 +301,7 @@ class Knight:
         :param int location: The tile number of the current location.
         """
         knight = game.board[location]
-        if game.current_player is player and player.color() is knight.color():
+        if game.current_player is player and player.color() is knight.color:
             if math.fabs(click - location) == 17 or math.fabs(click - location) == 15:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
@@ -321,7 +320,7 @@ class Bishop:
         """
         self.__owner = owner  # type: Player
         self.__type = "Bishop"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -346,7 +345,7 @@ class Bishop:
         :param int location: The tile number of the current location.
         """
         bishop = game.board[location]
-        if game.current_player is player and player.color() is bishop.color():
+        if game.current_player is player and player.color() is bishop.color:
             if (click - location) % 9 == 0 or (click - location) % 7 == 0:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
@@ -365,7 +364,7 @@ class Queen:
         """
         self.__owner = owner
         self.__type = "Queen"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -390,7 +389,7 @@ class Queen:
         :param int location: The tile number of the current location.
         """
         queen = game.board[location]
-        if game.current_player is player and player.color() is queen.color():
+        if game.current_player is player and player.color() is queen.color:
             if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or (
                         click - location) % 7 == 0:
                 queen = game.board.pop(location)
@@ -410,7 +409,7 @@ class King:
         """
         self.__owner = owner  # type: Player
         self.__type = "King"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -435,7 +434,7 @@ class King:
         :param int location: The tile number of the current location.
         """
         king = game.board[location]
-        if game.current_player is player and player.color() is king.color():
+        if game.current_player is player and player.color() is king.color:
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
                             click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
