@@ -6,14 +6,14 @@ The game will use 8 classes involving the game, the pieces, and the player
 CS 210, Introduction to Programming
 """
 
+import math
+import tkinter as tk
+
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
 __instructor__ = "Dr. Bower"
 __date__ = "05 Dec 2017"
 __documentation__ = """ None """
-
-import math
-import tkinter as tk
 
 """Classes nearly complete; provisions needed for killing other pieces, and not letting pieces move through(wrap 
    around)borders. Other things needed: GUI/Adv. features (if desired)."""
