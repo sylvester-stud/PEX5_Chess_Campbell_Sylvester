@@ -33,12 +33,44 @@ def main():
     game_board = Board(player1, player2)
     # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
-    Draw_Board()
+    # Draw_Board(game_board)
+    print(game_board.board[1].type)
+    print(game_board.board[0].type)
 
 
-def Draw_Board():
+def Draw_Board(Board):
+    # Attach piece images to respective file names.
+    white_pawn = "./Chess Pieces/White-Pawn.gif"
+    white_rook = "./Chess Pieces/White-Rook.gif"
+    white_knight = "./Chess Pieces/White-Knight.gif"
+    white_bishop = "./Chess Pieces/White-Bishop.gif"
+    white_queen = "./Chess Pieces/White-Queen.gif"
+    white_king = "./Chess Pieces/White-King.gif"
+    black_pawn = "./Chess Pieces/Black-Pawn.gif"
+    black_rook = "./Chess Pieces/Black-Rook.gif"
+    black_knight = "./Chess Pieces/Black-Knight.gif"
+    black_bishop = "./Chess Pieces/Black-Bishop.gif"
+    black_queen = "./Chess Pieces/Black-Queen.gif"
+    black_king = "./Chess Pieces/Black-King.gif"
+
     window = turtle.Screen()
     artist = turtle.Turtle()
+    piece = turtle.Turtle()
+
+    # Register all Chess Pieces in GUI.
+    window.register_shape(white_pawn)
+    window.register_shape(white_rook)
+    window.register_shape(white_bishop)
+    window.register_shape(white_knight)
+    window.register_shape(white_queen)
+    window.register_shape(white_king)
+    window.register_shape(black_pawn)
+    window.register_shape(black_rook)
+    window.register_shape(black_knight)
+    window.register_shape(black_bishop)
+    window.register_shape(black_queen)
+    window.register_shape(black_king)
+
     window.setup(WIDTH, HEIGHT)
     artist.speed("fastest")
     window.tracer(0, 0)
@@ -46,7 +78,7 @@ def Draw_Board():
     x = -WIDTH // 2
     y = HEIGHT // 2
     counter = 0
-    while counter < 81:
+    while counter < 74:
         if counter % 9 != 0:
             Draw_Square(artist, x, y, 100, color)
             x += 100
@@ -59,10 +91,58 @@ def Draw_Board():
         else:
             color = "White"
     window.update()
-    check_x = [-400, 300, 200, 100, 0, 100, 200, 300]
-    check_y = [300, 200, 100, 0, 100, 200, 300, 400]
-    window.onclick(artist.goto)
+
+    # Print pieces to board GUI.
+    for tile in Board.board:
+        artist.up()
+        location = Board.board.index(tile)
+        x = (location % 8) * 100 - 350
+        y = -(location + 1) // 8 * (HEIGHT // 8) + HEIGHT // 2 + 50
+        piece.goto(x, y)
+        if tile == ():
+            pass
+        elif tile.type == "Pawn":
+            if tile.color == "White":
+                piece.shape(white_pawn)
+            else:
+                piece.shape(black_pawn)
+        elif tile.type == "Rook":
+            if tile.color() == "White":
+                piece.shape(white_rook)
+            else:
+                piece.shape(black_rook)
+        elif tile.type == "Knight":
+            if tile.color() == "White":
+                piece.shape(white_knight)
+            else:
+                piece.shape(black_knight)
+        elif tile.type == "Bishop":
+            if tile.color() == "White":
+                piece.shape(white_bishop)
+            else:
+                piece.shape(black_bishop)
+        elif tile.type == "Queen":
+            if tile.color() == "White":
+                piece.shape(white_queen)
+            else:
+                piece.shape(black_queen)
+        else:
+            if tile.color() == "White":
+                piece.shape(white_king)
+            else:
+                piece.shape(black_king)
+
+        piece.stamp()
+    artist.down()
+
     window.update()
+
+    mouseclick = True
+    artist.penup()
+    while mouseclick:
+        window.onscreenclick(artist.goto)
+        # artist.ht()
+        window.update()
     window.mainloop()
 
 
@@ -235,10 +315,14 @@ class Rook:
         """
         self.__owner = owner
         self.__type = "Rook"
+        self.__color = owner.color
 
     @property
     def type(self):
         return self.__type
+
+    def color(self):
+        return self.__color
 
     def move(self, location, game, click):
         """
@@ -274,6 +358,7 @@ class Knight:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
