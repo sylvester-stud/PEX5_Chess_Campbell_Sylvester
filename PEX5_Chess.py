@@ -8,6 +8,7 @@ CS 210, Introduction to Programming
 
 import math
 import tkinter as tk
+from tkinter import ttk
 
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
@@ -71,9 +72,25 @@ class DrawChessBoard:
                     color = "White"
             if color == "White":
                 color = "Black"
-            else:
                 color = "White"
+            else:
+                pass
             r += 1
+        # for r in range(8):
+        #     for n in range(8):
+        #         button = ttk.Button(command=move, cursor=True, background=color)
+        # 
+        #             # (n * width // 8), r * height // 8, (n + 1) * width // 8,
+        #             #                          (r + 1) * height // 8, fill=color, outline="Black")
+        #         if color == "White":
+        #             color = "Black"
+        #         else:
+        #             color = "White"
+        #     if color == "White":
+        #         color = "Black"
+        #     else:
+        #         color = "White"
+        #     r += 1
 
 
 class Board:
