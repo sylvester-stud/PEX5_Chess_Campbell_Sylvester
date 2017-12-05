@@ -81,6 +81,7 @@ class DrawChessBoard:
         #
         #             # (n * width // 8), r * height // 8, (n + 1) * width // 8,
         #             #                          (r + 1) * height // 8, fill=color, outline="Black")
+        #         button.pack()
         #         if color == "White":
         #             color = "Black"
         #         else:
@@ -90,6 +91,14 @@ class DrawChessBoard:
         #     else:
         #         color = "White"
         #     r += 1
+        """
+        POSSIBLE TEXT BASED GAMEPLAY (NOT FULL OR FUNCTIONING CODE!)
+        while board.winner is None:
+            location = tk.Entry("Which piece will {} move?".format(board.current_player)
+            click = tk.Entry("What is {}'s move?".format(board.current_player)
+            board.board[location].move(board.current_player, click, board.board, location)
+            board.board.new_turn()
+        """
 
 
 class Board:
