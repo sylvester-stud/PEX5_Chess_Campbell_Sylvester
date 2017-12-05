@@ -6,17 +6,21 @@ The game will use 8 classes involving the game, the pieces, and the player
 CS 210, Introduction to Programming
 """
 
+import math
+import turtle
+
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
 __instructor__ = "Dr. Bower"
 __date__ = "05 Dec 2017"
 __documentation__ = """ None """
 
-import math
-import tkinter as tk
-
 """Classes nearly complete; provisions needed for killing other pieces, and not letting pieces move through(wrap 
    around)borders. Other things needed: GUI/Adv. features (if desired)."""
+
+# Window Properties:
+WIDTH = 800
+HEIGHT = 800
 
 
 def main():
@@ -24,56 +28,55 @@ def main():
     Contains the main program for the PEX
     """
 
-    program = DrawChessBoard()
-    program.window.mainloop()
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
     # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
+    Draw_Board()
 
 
-class DrawChessBoard:
-    """ An App that serves as the GUI for a Chess game. """
+def Draw_Board():
+    window = turtle.Screen()
+    artist = turtle.Turtle()
+    window.setup(WIDTH, HEIGHT)
+    artist.speed("fastest")
+    window.tracer(0, 0)
+    color = "Black"
+    x = -WIDTH // 2
+    y = HEIGHT // 2
+    counter = 0
+    while counter < 81:
+        if counter % 9 != 0:
+            Draw_Square(artist, x, y, 100, color)
+            x += 100
+        else:
+            y -= 100
+            x = -WIDTH // 2
+        counter += 1
+        if color == "White":
+            color = "Black"
+        else:
+            color = "White"
+    window.update()
+    check_x = [-400, 300, 200, 100, 0, 100, 200, 300]
+    check_y = [300, 200, 100, 0, 100, 200, 300, 400]
+    window.onclick(artist.goto)
+    window.update()
+    window.mainloop()
 
-    def __init__(self):
-        self.window = tk.Tk()
-        self.window.title("Chess")
 
-        # View / Control
-        self.canvas = None  # type: tk.Canvas
-        self.create_widgets()
-
-    def mouse_click(self):
-        cv = self.Canvas()
-
-    def create_widgets(self):
-        lbl = tk.Label(self.window, text="Chess Board")
-        lbl.pack()
-
-        # Canvas
-        self.canvas = tk.Canvas(self.window, bg="white")
-        self.canvas.pack(fill=tk.BOTH)
-        self.create_canvas()
-
-    def create_canvas(self):
-        self.canvas.config(width=600, height=600)
-        width = int(self.canvas["width"]) + 2
-        height = int(self.canvas["height"]) + 2
-        color = "White"
-        for r in range(8):
-            for n in range(8):
-                self.canvas.create_rectangle((n * width // 8), r * height // 8, (n + 1) * width // 8,
-                                             (r + 1) * height // 8, fill=color, outline="Black")
-                if color == "White":
-                    color = "Black"
-                else:
-                    color = "White"
-            if color == "White":
-                color = "Black"
-            else:
-                color = "White"
-            r += 1
+def Draw_Square(turtle, x, y, width, color):
+    turtle.seth(0)
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.color(color)
+    turtle.begin_fill()
+    for i in range(4):
+        turtle.fd(width)
+        turtle.left(90)
+    turtle.end_fill()
 
 
 class Board:
@@ -163,6 +166,7 @@ class Player:
     def name(self):
         return self.__name
 
+    @property
     def color(self):
         return self.__color
 
@@ -179,12 +183,12 @@ class Pawn:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str owner: The player who owns the pawn.
+        :param Player owner: The player who owns the pawn.
         """
         self.__owner = owner  # type: Player
         self.__type = "Pawn"
         self.__played = False  # tracks whether or not a pawn has moved (first move can be up to two spaces)
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -195,9 +199,11 @@ class Pawn:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -208,8 +214,8 @@ class Pawn:
         :param Board game: The game in which to move the pawn.
         :param int location: The tile number of the current location.
         """
-        pawn = game.board[location]
-        if game.current_player is player and player.color() is pawn.color() and (click - location) % 8 == 0:
+        pawn = game.board[location]  # type: Pawn
+        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
             if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
                     location == 8 or player.color() == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
@@ -225,8 +231,7 @@ class Rook:
 
     def __init__(self, owner):
         """
-
-        :return:
+        :param Player owner: The owning player
         """
         self.__owner = owner
         self.__type = "Rook"
@@ -254,17 +259,16 @@ class Knight:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: the player
         """
-        self.__owner = owner  # type: Player
+        self.__owner = owner
         self.__type = "Knight"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
         """
-        Returns the owner of the pawn
+        Returns the owner
         :return: the owner
         :rtype: Player
         """
@@ -284,7 +288,7 @@ class Knight:
         :param int location: The tile number of the current location.
         """
         knight = game.board[location]
-        if game.current_player is player and player.color() is knight.color():
+        if game.current_player is player and player.color() is knight.color:
             if math.fabs(click - location) == 17 or math.fabs(click - location) == 15:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
@@ -299,12 +303,11 @@ class Bishop:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: the player who owns the bishop
         """
         self.__owner = owner  # type: Player
         self.__type = "Bishop"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -329,7 +332,7 @@ class Bishop:
         :param int location: The tile number of the current location.
         """
         bishop = game.board[location]
-        if game.current_player is player and player.color() is bishop.color():
+        if game.current_player is player and player.color() is bishop.color:
             if (click - location) % 9 == 0 or (click - location) % 7 == 0:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
@@ -344,12 +347,11 @@ class Queen:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: The owning player
         """
-        self.__owner = owner  # type: Player
+        self.__owner = owner
         self.__type = "Queen"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -374,7 +376,7 @@ class Queen:
         :param int location: The tile number of the current location.
         """
         queen = game.board[location]
-        if game.current_player is player and player.color() is queen.color():
+        if game.current_player is player and player.color() is queen.color:
             if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or (
                         click - location) % 7 == 0:
                 queen = game.board.pop(location)
@@ -390,12 +392,11 @@ class King:
     def __init__(self, owner):
         """
         Initializes a new Player with a name and a color.
-        :param str name: the player's name
-        :param str color: the player's color
+        :param Player owner: The owning Player
         """
         self.__owner = owner  # type: Player
         self.__type = "King"
-        self.__color = owner.color()
+        self.__color = owner.color
 
     @property
     def owner(self):
@@ -420,7 +421,7 @@ class King:
         :param int location: The tile number of the current location.
         """
         king = game.board[location]
-        if game.current_player is player and player.color() is king.color():
+        if game.current_player is player and player.color() is king.color:
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
                             click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
