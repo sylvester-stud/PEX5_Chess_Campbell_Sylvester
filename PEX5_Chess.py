@@ -256,12 +256,10 @@ class Pawn:
                 :param int location: The tile number of the current location.
                 """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
-            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
-                    location == 8 or player.color() == "Black" and location - click == 8 or\
-                            type(game.board[click]) == Pawn or type(game.board[click]) == Rook or\
-                            type(game.board[click]) == Bishop or type(game.board[click]) == Knight or\
-                            type(game.board[click]) == Queen or type(game.board[click]) == King:
+        if game.current_player is player and player.color() is pawn.color and (click - location) / 9 == 0 or\
+            (click - location) / 7 == 0 and game.board[click] != ():
+            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and \
+                    click - location == 8 or player.color() == "Black" and location - click == 8 or:
                 pawn = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = pawn
