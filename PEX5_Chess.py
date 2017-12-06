@@ -7,8 +7,8 @@ CS 210, Introduction to Programming
 """
 
 import math
-import tkinter as tk
-from tkinter import ttk
+import turtle
+from easygui import msgbox
 
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
@@ -19,86 +19,194 @@ __documentation__ = """ None """
 """Classes nearly complete; provisions needed for killing other pieces, and not letting pieces move through(wrap 
    around)borders. Other things needed: GUI/Adv. features (if desired)."""
 
+# Window Properties:
+WIDTH = 800
+HEIGHT = 800
+
+# Attach piece images to respective file names.
+white_pawn = "./Chess Pieces/White-Pawn.gif"
+white_rook = "./Chess Pieces/White-Rook.gif"
+white_knight = "./Chess Pieces/White-Knight.gif"
+white_bishop = "./Chess Pieces/White-Bishop.gif"
+white_queen = "./Chess Pieces/White-Queen.gif"
+white_king = "./Chess Pieces/White-King.gif"
+black_pawn = "./Chess Pieces/Black-Pawn.gif"
+black_rook = "./Chess Pieces/Black-Rook.gif"
+black_knight = "./Chess Pieces/Black-Knight.gif"
+black_bishop = "./Chess Pieces/Black-Bishop.gif"
+black_queen = "./Chess Pieces/Black-Queen.gif"
+black_king = "./Chess Pieces/Black-King.gif"
+
 
 def main():
     """
     Contains the main program for the PEX
     """
 
-    program = DrawChessBoard()
-    program.window.mainloop()
     player1 = Player("Name1", "White")
     player2 = Player("Opponent", "Black")
     game_board = Board(player1, player2)
     # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
+    board_gui(game_board, player1, player2)
+    print(game_board.board[1].type)
+    print(game_board.board[0].type)
 
 
-class DrawChessBoard:
-    """ An App that serves as the GUI for a Chess game. """
+def board_gui(board, player1, player2):
+    window = turtle.Screen()
+    artist = turtle.Turtle()
+    piece = turtle.Turtle()
+    writer = turtle.Turtle()
 
-    def __init__(self):
-        self.window = tk.Tk()
-        self.window.title("Chess")
+    # Register all Chess Pieces in GUI.
+    window.register_shape(white_pawn)
+    window.register_shape(white_rook)
+    window.register_shape(white_bishop)
+    window.register_shape(white_knight)
+    window.register_shape(white_queen)
+    window.register_shape(white_king)
+    window.register_shape(black_pawn)
+    window.register_shape(black_rook)
+    window.register_shape(black_knight)
+    window.register_shape(black_bishop)
+    window.register_shape(black_queen)
+    window.register_shape(black_king)
 
-        # View / Control
-        self.canvas = None  # type: tk.Canvas
-        self.create_widgets()
+    window.setup(WIDTH, HEIGHT + 100)
+    artist.speed("fastest")
+    window.tracer(0, 0)
+    writer.up()
+    writer.ht()
+    writer.goto(0, HEIGHT // 2)
+    writer.down()
 
-    def mouse_click(self):
-        cv = self.Canvas()
+    draw_board(window, artist, piece, writer, board)
 
-    def create_widgets(self):
-        lbl = tk.Label(self.window, text="Chess Board")
-        lbl.pack()
+    winner = None
+    while winner is None:
+        location = 71
+        while location == 71:
+            location = get_location(window, artist)
+        click = location
+        while click == location:
+            click = get_location(window, artist)
+        if board.board[location] == ():
+            pass
+        else:
+            good_move = board.board[location].move(board.current_player, click, board, location)
+            if good_move is None:
+                board.new_turn()
+        winner = check_winner(board)
+        draw_board(window, artist, piece, writer, board)
+    msgbox("{} wins!".format(winner))
+    window.mainloop()
 
-        # Canvas
-        self.canvas = tk.Canvas(self.window, bg="white")
-        self.canvas.pack(fill=tk.BOTH)
-        self.create_canvas()
 
-    def create_canvas(self):
-        self.canvas.config(width=600, height=600)
-        width = int(self.canvas["width"]) + 2
-        height = int(self.canvas["height"]) + 2
-        color = "White"
-        for r in range(8):
-            for n in range(8):
-                self.canvas.create_rectangle((n * width // 8), r * height // 8, (n + 1) * width // 8,
-                                             (r + 1) * height // 8, fill=color, outline="Black")
-                if color == "White":
-                    color = "Black"
-                else:
-                    color = "White"
-            if color == "White":
-                color = "Black"
+def draw_board(window, artist, piece, writer, board):
+    color = "Black"
+    x = -WIDTH // 2
+    y = HEIGHT // 2 - 50
+    counter = 0
+    while counter < 74:
+        if counter % 9 != 0:
+            Draw_Square(artist, x, y, 100, color)
+            x += 100
+        else:
+            y -= 100
+            x = -WIDTH // 2
+        counter += 1
+        if color == "White":
+            color = "Black"
+        else:
+            color = "White"
+    window.update()
+
+    # Print pieces to board GUI.
+    for tile in board.board:
+        piece.penup()
+        location = board.board.index(tile)
+        x = (location % 8) * 100 - 350
+        y = -(location + 1) // 8 * (HEIGHT // 8) + HEIGHT // 2
+        piece.goto(x, y)
+        if tile == ():
+            piece.color("White")
+            piece.shape("triangle")
+        elif tile.type == "Pawn":
+            if tile.color == "White":
+                piece.shape(white_pawn)
             else:
-                color = "White"
-            r += 1
-        # for r in range(8):
-        #     for n in range(8):
-        #         button = ttk.Button(command=move, cursor=True, background=color)
-        #
-        #             # (n * width // 8), r * height // 8, (n + 1) * width // 8,
-        #             #                          (r + 1) * height // 8, fill=color, outline="Black")
-        #         button.pack()
-        #         if color == "White":
-        #             color = "Black"
-        #         else:
-        #             color = "White"
-        #     if color == "White":
-        #         color = "Black"
-        #     else:
-        #         color = "White"
-        #     r += 1
-        """
-        POSSIBLE TEXT BASED GAMEPLAY (NOT FULL OR FUNCTIONING CODE!)
-        while board.winner is None:
-            location = tk.Entry("Which piece will {} move?".format(board.current_player)
-            click = tk.Entry("What is {}'s move?".format(board.current_player)
-            board.board[location].move(board.current_player, click, board.board, location)
-            board.board.new_turn()
-        """
+                piece.shape(black_pawn)
+        elif tile.type == "Rook":
+            if tile.color == "White":
+                piece.shape(white_rook)
+            else:
+                piece.shape(black_rook)
+        elif tile.type == "Knight":
+            if tile.color == "White":
+                piece.shape(white_knight)
+            else:
+                piece.shape(black_knight)
+        elif tile.type == "Bishop":
+            if tile.color == "White":
+                piece.shape(white_bishop)
+            else:
+                piece.shape(black_bishop)
+        elif tile.type == "Queen":
+            if tile.color == "White":
+                piece.shape(white_queen)
+            else:
+                piece.shape(black_queen)
+        else:
+            if tile.color == "White":
+                piece.shape(white_king)
+            else:
+                piece.shape(black_king)
+        piece.stamp()
+
+    # Writer changes
+    writer.undo()
+    writer.write("{}'s turn".format(board.current_player.color), False, align="Center", font=("Arial", 20, "normal"))
+
+    window.update()
+    artist.penup()
+    artist.ht()
+
+
+def get_location(window, artist):
+    window.onscreenclick(artist.goto)
+    window.update()
+    x, y = artist.xcor(), artist.ycor() + 50
+    x_int = math.ceil(x / 100) + 3
+    y_int = (math.fabs(math.ceil(y / 100) - 4))
+    location = int(y_int * 8 + x_int)
+    return location
+
+
+def Draw_Square(turtle, x, y, width, color):
+    turtle.seth(0)
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.color(color)
+    turtle.begin_fill()
+    for i in range(4):
+        turtle.fd(width)
+        turtle.left(90)
+    turtle.end_fill()
+
+
+def check_winner(board):
+    kings = []
+    for space in board.board:
+        if type(space) == King:
+            kings.append(space)
+    if len(kings) != 2:
+        color = kings[0].color
+        if board.player1.color == color:
+            return board.player1
+        else:
+            return board.player2
 
 
 class Board:
@@ -237,16 +345,17 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
-            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and\
-                            click - location == 8 or player.color() == "Black" and location - click == 8 and\
-                            game.board[click] == ():
+        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0 and \
+                        game.board[click] == ():
+            if self.__played is False and math.fabs(click - location) == 16 or player.color == "White" and click - \
+                    location == 8 or player.color == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = pawn
                 self.__played = True
         else:
-            pass
+            good_move = self.attack(player, click, game, location)
+            return good_move
 
     def attack(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
@@ -256,16 +365,15 @@ class Pawn:
                 :param int location: The tile number of the current location.
                 """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color() is pawn.color and (click - location) / 9 == 0 or\
-            (click - location) / 7 == 0 and game.board[click] != ():
-            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and \
-                    click - location == 8 or player.color() == "Black" and location - click == 8 or:
-                pawn = game.board.pop(location)
-                game.board.insert(location, ())
-                game.board[click] = pawn
-                self.__played = True
+        if game.current_player is player and player.color is pawn.color and game.board[click] != () and \
+                        abs(click - location) < 10 and ((click - location) % 9 == 0 or (click - location) % 7 == 0) and \
+                        game.board[click].color != player.color:
+            pawn = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board[click] = pawn
+            self.__played = True
         else:
-            pass
+            return "Invalid"
 
 
 class Rook:
@@ -277,22 +385,28 @@ class Rook:
         """
         self.__owner = owner
         self.__type = "Rook"
+        self.__color = owner.color
 
     @property
     def type(self):
         return self.__type
 
-    def move(self, location, game, click):
+    @property
+    def color(self):
+        return self.__color
+
+    def move(self, player, click, game, location):
         """
 
         :return:
         """
-        if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8:
+        if ((click - location) % 8 == 0 or abs(location // 8) == click // 8) and \
+                (game.board[click] == () or game.board[click].color != player.color):
             rook = game.board.pop(location)
             game.board.insert(location, ())
             game.board[click] = rook
         else:
-            pass
+            return "Invalid"
 
 
 class Knight:
@@ -316,9 +430,11 @@ class Knight:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -330,13 +446,15 @@ class Knight:
         :param int location: The tile number of the current location.
         """
         knight = game.board[location]
-        if game.current_player is player and player.color() is knight.color:
-            if math.fabs(click - location) == 17 or math.fabs(click - location) == 15:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                        player.color is knight.color:
+            if abs(click - location) == 17 or abs(click - location) == 15 or abs(click - location) == 10 or \
+                            abs(click - location) == 6:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = knight
         else:
-            pass
+            return "Invalid"
 
 
 class Bishop:
@@ -360,9 +478,11 @@ class Bishop:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -374,13 +494,14 @@ class Bishop:
         :param int location: The tile number of the current location.
         """
         bishop = game.board[location]
-        if game.current_player is player and player.color() is bishop.color:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                        player.color is bishop.color:
             if (click - location) % 9 == 0 or (click - location) % 7 == 0:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = bishop
         else:
-            pass
+            return "Invalid"
 
 
 class Queen:
@@ -404,9 +525,11 @@ class Queen:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -418,14 +541,15 @@ class Queen:
         :param int location: The tile number of the current location.
         """
         queen = game.board[location]
-        if game.current_player is player and player.color() is queen.color:
-            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or (
-                        click - location) % 7 == 0:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                        player.color is queen.color:
+            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or \
+                                    (click - location) % 7 == 0:
                 queen = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = queen
         else:
-            pass
+            return "Invalid"
 
 
 class King:
@@ -449,9 +573,11 @@ class King:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -463,7 +589,8 @@ class King:
         :param int location: The tile number of the current location.
         """
         king = game.board[location]
-        if game.current_player is player and player.color() is king.color:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                        player.color is king.color:
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
                             click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
@@ -489,4 +616,4 @@ if __name__ == "__main__":
         pass
     finally:
         main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
-# 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 ppntrpnzcoryy
+        # 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 pp
