@@ -77,7 +77,7 @@ def board_gui(board, player1, player2):
     window.tracer(0, 0)
     writer.up()
     writer.ht()
-    writer.goto(0, HEIGHT // 2 - 50)
+    writer.goto(0, HEIGHT // 2)
     writer.down()
 
     draw_board(window, artist, piece, writer, board)
