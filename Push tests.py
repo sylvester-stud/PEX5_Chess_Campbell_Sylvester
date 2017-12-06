@@ -8,6 +8,7 @@ CS 210, Introduction to Programming
 
 import math
 import turtle
+from easygui import msgbox
 
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
@@ -96,8 +97,9 @@ def board_gui(board, player1, player2):
             good_move = board.board[location].move(board.current_player, click, board, location)
             if good_move is None:
                 board.new_turn()
+        winner = check_winner(board)
         draw_board(window, artist, piece, writer, board)
-
+    msgbox("{} wins!".format(winner))
     window.mainloop()
 
 
@@ -192,6 +194,19 @@ def Draw_Square(turtle, x, y, width, color):
         turtle.fd(width)
         turtle.left(90)
     turtle.end_fill()
+
+
+def check_winner(board):
+    kings = []
+    for space in board.board:
+        if type(space) == King:
+            kings.append(space)
+    if len(kings) != 2:
+        color = kings[0].color
+        if board.player1.color == color:
+            return board.player1
+        else:
+            return board.player2
 
 
 class Board:
@@ -330,8 +345,8 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0 and\
-                game.board[click] == ():
+        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0 and \
+                        game.board[click] == ():
             if self.__played is False and math.fabs(click - location) == 16 or player.color == "White" and click - \
                     location == 8 or player.color == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
@@ -432,9 +447,9 @@ class Knight:
         """
         knight = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
-                player.color is knight.color:
+                        player.color is knight.color:
             if abs(click - location) == 17 or abs(click - location) == 15 or abs(click - location) == 10 or \
-                    abs(click - location) == 6:
+                            abs(click - location) == 6:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = knight
@@ -480,7 +495,7 @@ class Bishop:
         """
         bishop = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
-                player.color is bishop.color:
+                        player.color is bishop.color:
             if (click - location) % 9 == 0 or (click - location) % 7 == 0:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
@@ -527,9 +542,9 @@ class Queen:
         """
         queen = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
-                player.color is queen.color:
+                        player.color is queen.color:
             if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or \
-                    (click - location) % 7 == 0:
+                                    (click - location) % 7 == 0:
                 queen = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = queen
@@ -575,7 +590,7 @@ class King:
         """
         king = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
-                player.color is king.color:
+                        player.color is king.color:
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
                             click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
