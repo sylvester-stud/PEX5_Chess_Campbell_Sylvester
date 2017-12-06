@@ -89,7 +89,7 @@ def board_gui(board, player1, player2):
         while location == 71:
             location = get_location(window, artist)
         click = location
-        if board.board[location] != () and board.board[location].type == "Pawn":
+        if board.board[location] != () and board.board[location].type == "Pawn" or board.board[location].type == "King":
             print(board.board[location].check_moves(board.board[location].owner, board, location))
         while click == location:
             click = get_location(window, artist)
@@ -622,6 +622,17 @@ class King:
                 return "Invalid"
         else:
             return "Invalid"
+
+    def check_moves(self, player, game, location):
+        good_moves = []
+        king = game.board[location]  # type: King
+        for click in range(len(game.board)):
+            if game.current_player is player and player.color is king.color and\
+                    (game.board[click] == () or game.board[click].color != king.color) and\
+                    math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or\
+                    math.fabs(click - location) == 8 or math.fabs(click - location) == 9:
+                good_moves.append(click)
+        return good_moves
 
 
 # ---DO NOT EDIT---
