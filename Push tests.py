@@ -175,7 +175,7 @@ def draw_board(window, artist, piece, writer, board):
 def get_location(window, artist):
     window.onscreenclick(artist.goto)
     window.update()
-    x, y = artist.xcor(), artist.ycor()
+    x, y = artist.xcor(), artist.ycor() + 50
     x_int = math.ceil(x / 100) + 3
     y_int = (math.fabs(math.ceil(y / 100) - 4))
     print(y_int)
