@@ -53,7 +53,6 @@ def main():
 
 
 def board_gui(board, player1, player2):
-
     window = turtle.Screen()
     artist = turtle.Turtle()
     piece = turtle.Turtle()
@@ -89,7 +88,9 @@ def board_gui(board, player1, player2):
         if board.board[location] == ():
             pass
         else:
-            board.board[location].move(player1, click, board, location)
+            good_move = board.board[location].move(board.current_player, click, board, location)
+            if good_move is None:
+                board.new_turn()
         draw_board(window, artist, piece, board)
 
     window.mainloop()
@@ -130,27 +131,27 @@ def draw_board(window, artist, piece, board):
             else:
                 piece.shape(black_pawn)
         elif tile.type == "Rook":
-            if tile.color() == "White":
+            if tile.color == "White":
                 piece.shape(white_rook)
             else:
                 piece.shape(black_rook)
         elif tile.type == "Knight":
-            if tile.color() == "White":
+            if tile.color == "White":
                 piece.shape(white_knight)
             else:
                 piece.shape(black_knight)
         elif tile.type == "Bishop":
-            if tile.color() == "White":
+            if tile.color == "White":
                 piece.shape(white_bishop)
             else:
                 piece.shape(black_bishop)
         elif tile.type == "Queen":
-            if tile.color() == "White":
+            if tile.color == "White":
                 piece.shape(white_queen)
             else:
                 piece.shape(black_queen)
         else:
-            if tile.color() == "White":
+            if tile.color == "White":
                 piece.shape(white_king)
             else:
                 piece.shape(black_king)
@@ -328,7 +329,26 @@ class Pawn:
                 game.board[click] = pawn
                 self.__played = True
         else:
-            pass
+            good_move = self.attack(player, click, game, location)
+            return good_move
+
+    def attack(self, player, click, game, location):
+        """ Moves a pawn to the clicked location (rules-permitting).
+                :param Player player: The player moving.
+                :param int click: The tile number of the desired space to move to (clicked tile).
+                :param Board game: The game in which to move the pawn.
+                :param int location: The tile number of the current location.
+                """
+        pawn = game.board[location]  # type: Pawn
+        if game.current_player is player and player.color is pawn.color and game.board[click] != () and \
+                        abs(click - location) < 10 and ((click - location) % 9 == 0 or (click - location) % 7 == 0) and \
+                        game.board[click].color != player.color:
+            pawn = game.board.pop(location)
+            game.board.insert(location, ())
+            game.board[click] = pawn
+            self.__played = True
+        else:
+            return "Invalid"
 
 
 class Rook:
@@ -346,20 +366,22 @@ class Rook:
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
-    def move(self, location, game, click):
+    def move(self, player, click, game, location):
         """
 
         :return:
         """
-        if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8:
+        if ((click - location) % 8 == 0 or abs(location // 8) == click // 8) and \
+                (game.board[click] == () or game.board[click].color != player.color):
             rook = game.board.pop(location)
             game.board.insert(location, ())
             game.board[click] = rook
         else:
-            pass
+            return "Invalid"
 
 
 class Knight:
@@ -387,6 +409,7 @@ class Knight:
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -398,13 +421,15 @@ class Knight:
         :param int location: The tile number of the current location.
         """
         knight = game.board[location]
-        if game.current_player is player and player.color() is knight.color:
-            if math.fabs(click - location) == 17 or math.fabs(click - location) == 15:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                player.color is knight.color:
+            if abs(click - location) == 17 or abs(click - location) == 15 or abs(click - location) == 10 or \
+                    abs(click - location) == 6:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = knight
         else:
-            pass
+            return "Invalid"
 
 
 class Bishop:
@@ -428,9 +453,11 @@ class Bishop:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -442,13 +469,14 @@ class Bishop:
         :param int location: The tile number of the current location.
         """
         bishop = game.board[location]
-        if game.current_player is player and player.color() is bishop.color:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                player.color is bishop.color:
             if (click - location) % 9 == 0 or (click - location) % 7 == 0:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = bishop
         else:
-            pass
+            return "Invalid"
 
 
 class Queen:
@@ -472,9 +500,11 @@ class Queen:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -486,14 +516,15 @@ class Queen:
         :param int location: The tile number of the current location.
         """
         queen = game.board[location]
-        if game.current_player is player and player.color() is queen.color:
-            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or (
-                        click - location) % 7 == 0:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                player.color is queen.color:
+            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or \
+                    (click - location) % 7 == 0:
                 queen = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = queen
         else:
-            pass
+            return "Invalid"
 
 
 class King:
@@ -517,9 +548,11 @@ class King:
         """
         return self.__owner
 
+    @property
     def type(self):
         return self.__type
 
+    @property
     def color(self):
         return self.__color
 
@@ -531,7 +564,8 @@ class King:
         :param int location: The tile number of the current location.
         """
         king = game.board[location]
-        if game.current_player is player and player.color() is king.color:
+        if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
+                player.color is king.color:
             if math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or math.fabs(
                             click - location) == 8 or math.fabs(click - location) == 9:
                 king = game.board.pop(location)
@@ -557,4 +591,4 @@ if __name__ == "__main__":
         pass
     finally:
         main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
-# 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 pp
+        # 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 pp
