@@ -453,6 +453,8 @@ class Knight:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = knight
+            else:
+                return "Invalid"
         else:
             return "Invalid"
 
@@ -500,6 +502,8 @@ class Bishop:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = bishop
+            else:
+                return "Invalid"
         else:
             return "Invalid"
 
@@ -548,6 +552,8 @@ class Queen:
                 queen = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = queen
+            else:
+                return "Invalid"
         else:
             return "Invalid"
 
@@ -596,8 +602,10 @@ class King:
                 king = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = king
+            else:
+                return "Invalid"
         else:
-            pass
+            return "Invalid"
 
 
 # ---DO NOT EDIT---
