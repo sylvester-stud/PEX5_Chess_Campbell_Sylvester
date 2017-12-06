@@ -33,12 +33,12 @@ def main():
     game_board = Board(player1, player2)
     # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
-    Draw_Board(game_board)
+    draw_board(game_board)
     print(game_board.board[1].type)
     print(game_board.board[0].type)
 
 
-def Draw_Board(Board):
+def draw_board(board):
     # Attach piece images to respective file names.
     white_pawn = "./Chess Pieces/White-Pawn.gif"
     white_rook = "./Chess Pieces/White-Rook.gif"
@@ -93,14 +93,15 @@ def Draw_Board(Board):
     window.update()
 
     # Print pieces to board GUI.
-    for tile in Board.board:
-        artist.up()
-        location = Board.board.index(tile)
+    for tile in board.board:
+        piece.penup()
+        location = board.board.index(tile)
         x = (location % 8) * 100 - 350
         y = -(location + 1) // 8 * (HEIGHT // 8) + HEIGHT // 2 + 50
         piece.goto(x, y)
         if tile == ():
-            pass
+            piece.color("White")
+            piece.shape("triangle")
         elif tile.type == "Pawn":
             if tile.color == "White":
                 piece.shape(white_pawn)
@@ -131,9 +132,7 @@ def Draw_Board(Board):
                 piece.shape(white_king)
             else:
                 piece.shape(black_king)
-
         piece.stamp()
-    artist.down()
 
     window.update()
 
@@ -532,4 +531,4 @@ if __name__ == "__main__":
         pass
     finally:
         main()  # 158ae6d65fa398f102e6d805c3fd57ae0779c78e37c85d71bf6c34aac77f354a ppuevfgvnaflyirfg
-# 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 ppntrpnzcoryy
+# 1427a7e2b045a7428ffc5012d0f0dcecdfd4af0547ddb0da1b6d9e4b0eef7703 pp
