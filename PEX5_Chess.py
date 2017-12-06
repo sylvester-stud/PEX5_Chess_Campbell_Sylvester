@@ -22,6 +22,20 @@ __documentation__ = """ None """
 WIDTH = 800
 HEIGHT = 800
 
+# Attach piece images to respective file names.
+white_pawn = "./Chess Pieces/White-Pawn.gif"
+white_rook = "./Chess Pieces/White-Rook.gif"
+white_knight = "./Chess Pieces/White-Knight.gif"
+white_bishop = "./Chess Pieces/White-Bishop.gif"
+white_queen = "./Chess Pieces/White-Queen.gif"
+white_king = "./Chess Pieces/White-King.gif"
+black_pawn = "./Chess Pieces/Black-Pawn.gif"
+black_rook = "./Chess Pieces/Black-Rook.gif"
+black_knight = "./Chess Pieces/Black-Knight.gif"
+black_bishop = "./Chess Pieces/Black-Bishop.gif"
+black_queen = "./Chess Pieces/Black-Queen.gif"
+black_king = "./Chess Pieces/Black-King.gif"
+
 
 def main():
     """
@@ -33,25 +47,12 @@ def main():
     game_board = Board(player1, player2)
     # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
-    draw_board(game_board)
+    board_gui(game_board, player1, player2)
     print(game_board.board[1].type)
     print(game_board.board[0].type)
 
 
-def draw_board(board):
-    # Attach piece images to respective file names.
-    white_pawn = "./Chess Pieces/White-Pawn.gif"
-    white_rook = "./Chess Pieces/White-Rook.gif"
-    white_knight = "./Chess Pieces/White-Knight.gif"
-    white_bishop = "./Chess Pieces/White-Bishop.gif"
-    white_queen = "./Chess Pieces/White-Queen.gif"
-    white_king = "./Chess Pieces/White-King.gif"
-    black_pawn = "./Chess Pieces/Black-Pawn.gif"
-    black_rook = "./Chess Pieces/Black-Rook.gif"
-    black_knight = "./Chess Pieces/Black-Knight.gif"
-    black_bishop = "./Chess Pieces/Black-Bishop.gif"
-    black_queen = "./Chess Pieces/Black-Queen.gif"
-    black_king = "./Chess Pieces/Black-King.gif"
+def board_gui(board, player1, player2):
 
     window = turtle.Screen()
     artist = turtle.Turtle()
@@ -74,6 +75,27 @@ def draw_board(board):
     window.setup(WIDTH, HEIGHT)
     artist.speed("fastest")
     window.tracer(0, 0)
+
+    draw_board(window, artist, piece, board)
+
+    winner = None
+    while winner is None:
+        location = 71
+        while location == 71:
+            location = get_location(window, artist)
+        click = location
+        while click == location:
+            click = get_location(window, artist)
+        if board.board[location] == ():
+            pass
+        else:
+            board.board[location].move(player1, click, board, location)
+        draw_board(window, artist, piece, board)
+
+    window.mainloop()
+
+
+def draw_board(window, artist, piece, board):
     color = "Black"
     x = -WIDTH // 2
     y = HEIGHT // 2
@@ -135,14 +157,18 @@ def draw_board(board):
         piece.stamp()
 
     window.update()
-
-    mouseclick = True
     artist.penup()
-    while mouseclick:
-        window.onscreenclick(artist.goto)
-        # artist.ht()
-        window.update()
-    window.mainloop()
+    artist.ht()
+
+
+def get_location(window, artist):
+    window.onscreenclick(artist.goto)
+    window.update()
+    x, y = artist.xcor(), artist.ycor()
+    x_int = math.ceil(x / 100) + 3
+    y_int = math.fabs(math.ceil(y / 100) - 4)
+    location = int(y_int * 8 + x_int)
+    return location
 
 
 def Draw_Square(turtle, x, y, width, color):
@@ -294,9 +320,9 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color() is pawn.color and (click - location) % 8 == 0:
-            if self.__played is False and math.fabs(click - location) == 16 or player.color() == "White" and click - \
-                    location == 8 or player.color() == "Black" and location - click == 8:
+        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0:
+            if self.__played is False and math.fabs(click - location) == 16 or player.color == "White" and click - \
+                    location == 8 or player.color == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = pawn
