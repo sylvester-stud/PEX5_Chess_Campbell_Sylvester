@@ -88,7 +88,6 @@ def board_gui(board, player1, player2):
         while location == 71:
             location = get_location(window, artist)
         click = location
-        print(location)
         while click == location:
             click = get_location(window, artist)
         if board.board[location] == ():
@@ -178,7 +177,6 @@ def get_location(window, artist):
     x, y = artist.xcor(), artist.ycor() + 50
     x_int = math.ceil(x / 100) + 3
     y_int = (math.fabs(math.ceil(y / 100) - 4))
-    print(y_int)
     location = int(y_int * 8 + x_int)
     return location
 
@@ -332,7 +330,8 @@ class Pawn:
         :param int location: The tile number of the current location.
         """
         pawn = game.board[location]  # type: Pawn
-        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0:
+        if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0 and\
+                game.board[click] == ():
             if self.__played is False and math.fabs(click - location) == 16 or player.color == "White" and click - \
                     location == 8 or player.color == "Black" and location - click == 8:
                 pawn = game.board.pop(location)
