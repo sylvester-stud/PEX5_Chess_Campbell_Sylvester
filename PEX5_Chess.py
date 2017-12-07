@@ -464,6 +464,7 @@ class Pawn:
         :param Board game: The hosting board
         :param int location: The location of the pawn
         :return: Possible moves
+        :rtype: list[int]
         """
         good_moves = []
         pawn = game.board[location]  # type: Pawn
@@ -530,6 +531,10 @@ class Rook:
     def move(self, player, click, game, location):
         """
         Moves the Rook
+        :param Player player: The owning player of the rook
+        :param int click: The target of the move
+        :param Board game: The hosting board object
+        :param int location: The current location of the rook
         :return: String "Invalid if the move is invalid"
         """
         if ((click - location) % 8 == 0 or abs(location // 8) == click // 8) and \
@@ -584,7 +589,7 @@ class Knight:
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the knight.
         :param int location: The tile number of the current location.
         :return: Returns "Invalid" if no valid move is made
         """
@@ -625,18 +630,29 @@ class Bishop:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the bishop
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the bishop.
         :param int location: The tile number of the current location.
+        :return: "Invalid" if no valid move was played
         """
         bishop = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -651,6 +667,14 @@ class Bishop:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Checks for the possible moves
+        :param player:
+        :param game:
+        :param location:
+        :return: The possible moves
+        :rtype: list[int]
+        """
         good_moves = []
         king = game.board[location]  # type: King
         for click in range(len(game.board)):
@@ -684,18 +708,29 @@ class Queen:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the queen
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the queen.
         :param int location: The tile number of the current location.
+        :return: Returns "Invalid" if no valid move is detected
         """
         queen = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -711,11 +746,19 @@ class Queen:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Checks for the possible moves of the queen
+        :param Player player: The owning player
+        :param Board game: The hosting game
+        :param int location: The current location of the queen
+        :return: Possible moves
+        :rtype: list[int]
+        """
         good_moves = []
-        king = game.board[location]  # type: King
+        queen = game.board[location]  # type: Queen
         for click in range(len(game.board)):
-            if game.current_player is player and player.color is king.color and\
-                    (game.board[click] == () or game.board[click].color != king.color) and\
+            if game.current_player is player and player.color is queen.color and\
+                    (game.board[click] == () or game.board[click].color != queen.color) and\
                     (click - location) % 8 == 0 or abs(location // 8) == click // 8 or (click - location) % 9 == 0 or \
                     (click - location) % 7 == 0:
                 good_moves.append(click)
@@ -745,18 +788,29 @@ class King:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the king
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the king.
         :param int location: The tile number of the current location.
+        :return: "Invalid" if the move is not valid
         """
         king = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -772,6 +826,14 @@ class King:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Finds the possible moves of the king
+        :param Player player: The owning player
+        :param Board game: The hosting game
+        :param int location: The current location of the king
+        :return: The possible moves
+        :rtype: list[int]
+        """
         good_moves = []
         king = game.board[location]  # type: King
         for click in range(len(game.board)):
