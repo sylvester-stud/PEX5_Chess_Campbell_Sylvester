@@ -89,6 +89,10 @@ def board_gui(board, player1, player2):
         while location == 71:
             location = get_location(window, artist)
         click = location
+        try:
+            print(board.board[location].check_moves(board.board[location].owner, board, location))
+        except:
+            pass
         while click == location:
             click = get_location(window, artist)
         if board.board[location] == ():
@@ -357,6 +361,20 @@ class Pawn:
             good_move = self.attack(player, click, game, location)
             return good_move
 
+    def check_moves(self, player, game, location):
+        good_moves = []
+        pawn = game.board[location]  # type: Pawn
+        for click in range(len(game.board)):
+            if game.current_player is player and player.color is pawn.color and game.board[click] == ():
+                if self.__played is False and math.fabs(click - location) == 16 or player.color == "White" and click - \
+                        location == 8 or player.color == "Black" and location - click == 8:
+                    good_moves.append(click)
+                elif game.current_player is player and player.color is pawn.color and game.board[click] != () and \
+                        abs(click - location) < 10 and ((click - location) % 9 == 0 or (click - location) % 7 == 0) and\
+                        game.board[click].color != player.color:
+                    good_moves.append(click)
+        return good_moves
+
     def attack(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
                 :param Player player: The player moving.
@@ -366,7 +384,7 @@ class Pawn:
                 """
         pawn = game.board[location]  # type: Pawn
         if game.current_player is player and player.color is pawn.color and game.board[click] != () and \
-                        abs(click - location) < 10 and ((click - location) % 9 == 0 or (click - location) % 7 == 0) and \
+                        abs(click - location) < 10 and ((click - location) % 9 == 0 or (click - location) % 7 == 0) and\
                         game.board[click].color != player.color:
             pawn = game.board.pop(location)
             game.board.insert(location, ())
@@ -453,6 +471,8 @@ class Knight:
                 knight = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = knight
+            else:
+                return "Invalid"
         else:
             return "Invalid"
 
@@ -500,8 +520,20 @@ class Bishop:
                 bishop = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = bishop
+            else:
+                return "Invalid"
         else:
             return "Invalid"
+
+    def check_moves(self, player, game, location):
+        good_moves = []
+        king = game.board[location]  # type: King
+        for click in range(len(game.board)):
+            if game.current_player is player and player.color is king.color and\
+                    (game.board[click] == () or game.board[click].color != king.color) and\
+                    (click - location) % 9 == 0 or (click - location) % 7 == 0:
+                good_moves.append(click)
+        return good_moves
 
 
 class Queen:
@@ -543,13 +575,26 @@ class Queen:
         queen = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
                         player.color is queen.color:
-            if (click - location) % 8 == 0 or (location % 8 - click % 8) < 8 or (click - location) % 9 == 0 or \
+            if (click - location) % 8 == 0 or abs(location // 8) == click // 8 or (click - location) % 9 == 0 or \
                                     (click - location) % 7 == 0:
                 queen = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = queen
+            else:
+                return "Invalid"
         else:
             return "Invalid"
+
+    def check_moves(self, player, game, location):
+        good_moves = []
+        king = game.board[location]  # type: King
+        for click in range(len(game.board)):
+            if game.current_player is player and player.color is king.color and\
+                    (game.board[click] == () or game.board[click].color != king.color) and\
+                    (click - location) % 8 == 0 or abs(location // 8) == click // 8 or (click - location) % 9 == 0 or \
+                    (click - location) % 7 == 0:
+                good_moves.append(click)
+        return good_moves
 
 
 class King:
@@ -596,8 +641,21 @@ class King:
                 king = game.board.pop(location)
                 game.board.insert(location, ())
                 game.board[click] = king
+            else:
+                return "Invalid"
         else:
-            pass
+            return "Invalid"
+
+    def check_moves(self, player, game, location):
+        good_moves = []
+        king = game.board[location]  # type: King
+        for click in range(len(game.board)):
+            if game.current_player is player and player.color is king.color and\
+                    (game.board[click] == () or game.board[click].color != king.color) and\
+                    math.fabs(click - location) == 1 or math.fabs(click - location) == 7 or\
+                    math.fabs(click - location) == 8 or math.fabs(click - location) == 9:
+                good_moves.append(click)
+        return good_moves
 
 
 # ---DO NOT EDIT---
