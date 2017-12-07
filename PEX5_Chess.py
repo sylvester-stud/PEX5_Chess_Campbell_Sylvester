@@ -116,7 +116,7 @@ def board_gui(board, player1, player2):
                 board.new_turn()
         winner = check_winner(board)  # Checks for the winner
         draw_board(window, artist, piece, writer, board)
-    msgbox("{} wins!".format(winner))  # Declares winner
+    msgbox("{} wins!".format(winner.name))  # Declares winner
     window.mainloop()
 
 
@@ -135,7 +135,7 @@ def draw_board(window, artist, piece, writer, board):
     counter = 0
     while counter < 74:  # Initializes the full visual board (unknown constant)
         if counter % 9 != 0:
-            Draw_Square(artist, x, y, 100, color)
+            draw_square(artist, x, y, 100, color)
             x += 100
         else:
             y -= 100
@@ -218,25 +218,25 @@ def get_location(window, artist):
     return location
 
 
-def Draw_Square(turtle, x, y, width, color):
+def draw_square(tom, x, y, width, color):
     """
     Draws the empty squares for the board
-    :param Turtle turtle: Turtle which draws the squares
+    :param Turtle tom: Turtle which draws the squares
     :param int x: The x location of the square
     :param int y: The y location of the square
     :param int width: The length of a side of the square
     :param str color: The color of the square
     """
-    turtle.seth(0)
-    turtle.penup()
-    turtle.goto(x, y)
-    turtle.pendown()
-    turtle.color(color)
-    turtle.begin_fill()
+    tom.seth(0)
+    tom.penup()
+    tom.goto(x, y)
+    tom.pendown()
+    tom.color(color)
+    tom.begin_fill()
     for i in range(4):
-        turtle.fd(width)
-        turtle.left(90)
-    turtle.end_fill()
+        tom.fd(width)
+        tom.left(90)
+    tom.end_fill()
 
 
 def check_winner(board):
