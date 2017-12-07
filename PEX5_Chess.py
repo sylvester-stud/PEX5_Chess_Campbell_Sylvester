@@ -8,7 +8,7 @@ CS 210, Introduction to Programming
 
 import math
 import turtle
-from easygui import msgbox
+from easygui import msgbox, enterbox
 
 __author__ = "Cage Campbell & Christian Sylvester"
 __section__ = "M6"
@@ -43,10 +43,14 @@ def main():
     Contains the main program for the PEX
     """
 
-    player1 = Player("Name1", "White")
-    player2 = Player("Opponent", "Black")
+    # Initializes the players for the game
+    p1_name = enterbox("Enter Player 1 name", "P1 name", default="Name1")
+    player1 = Player(p1_name, "White")
+    p2_name = enterbox("Enter Player 2 name", "P2 name", default="Name2")
+    player2 = Player(p2_name, "Black")
+
+    # Initializes the board and prints the initial condition to the console
     game_board = Board(player1, player2)
-    # Example move: game_board.board[10].move(player1, 24, game_board, 8)
     print(game_board.print_board())
     board_gui(game_board, player1, player2)
     print(game_board.board[1].type)
@@ -54,12 +58,19 @@ def main():
 
 
 def board_gui(board, player1, player2):
+    """
+    Plays the game as a gui
+    :param board: Board object for the game
+    :param player1: Determines the first player
+    :param player2: Determines the second player
+    """
+    # Set-up for the turtle-based gui
     window = turtle.Screen()
     artist = turtle.Turtle()
     piece = turtle.Turtle()
     writer = turtle.Turtle()
 
-    # Register all Chess Pieces in GUI.
+    # Register all Chess Piece Images in GUI.
     window.register_shape(white_pawn)
     window.register_shape(white_rook)
     window.register_shape(white_bishop)
@@ -73,6 +84,7 @@ def board_gui(board, player1, player2):
     window.register_shape(black_queen)
     window.register_shape(black_king)
 
+    # Window and writer initialization
     window.setup(WIDTH, HEIGHT + 100)
     artist.speed("fastest")
     window.tracer(0, 0)
@@ -81,40 +93,49 @@ def board_gui(board, player1, player2):
     writer.goto(0, HEIGHT // 2)
     writer.down()
 
-    draw_board(window, artist, piece, writer, board)
+    draw_board(window, artist, piece, writer, board)  # Draws the first board
 
     winner = None
-    while winner is None:
-        location = 71
-        while location == 71:
+    while winner is None:  # Plays until a winner is declared
+        location = 71  # Black magic
+        while location == 71:  # Grabs the mouse click for the piece
             location = get_location(window, artist)
         click = location
-        try:
-            print(board.board[location].check_moves(board.board[location].owner, board, location))
-        except:
-            pass
-        while click == location:
+        # try:  # For testing of the check_moves of each piece
+        #     print(board.board[location].check_moves(board.board[location].owner, board, location))
+        # except:
+        #     pass
+        while click == location:  # Grabs the mouse click for the move
             click = get_location(window, artist)
         if board.board[location] == ():
             pass
         else:
+            # Moves the selected piece and advances the turn if a valid move was made
             good_move = board.board[location].move(board.current_player, click, board, location)
             if good_move is None:
                 board.new_turn()
-        winner = check_winner(board)
+        winner = check_winner(board)  # Checks for the winner
         draw_board(window, artist, piece, writer, board)
-    msgbox("{} wins!".format(winner))
+    msgbox("{} wins!".format(winner.name))  # Declares winner
     window.mainloop()
 
 
 def draw_board(window, artist, piece, writer, board):
+    """
+    Draws a board in its current state
+    :param Screen window: The window that the gui hosted game is played in
+    :param Turtle artist: The turtle which draws the board
+    :param Turtle piece: The turtle which manipulates the pieces
+    :param Turtle writer: The turtle which writes the game state
+    :param Board board: The host board
+    """
     color = "Black"
     x = -WIDTH // 2
     y = HEIGHT // 2 - 50
     counter = 0
-    while counter < 74:
+    while counter < 74:  # Initializes the full visual board (unknown constant)
         if counter % 9 != 0:
-            Draw_Square(artist, x, y, 100, color)
+            draw_square(artist, x, y, 100, color)
             x += 100
         else:
             y -= 100
@@ -133,40 +154,43 @@ def draw_board(window, artist, piece, writer, board):
         x = (location % 8) * 100 - 350
         y = -(location + 1) // 8 * (HEIGHT // 8) + HEIGHT // 2
         piece.goto(x, y)
-        if tile == ():
+
+        # Puts all of the pieces in their respective locations
+        if tile == ():  # Empty spaces
             piece.color("White")
             piece.shape("triangle")
-        elif tile.type == "Pawn":
+        elif tile.type == "Pawn":  # Pawns
             if tile.color == "White":
                 piece.shape(white_pawn)
             else:
                 piece.shape(black_pawn)
-        elif tile.type == "Rook":
+        elif tile.type == "Rook":  # Rooks
             if tile.color == "White":
                 piece.shape(white_rook)
             else:
                 piece.shape(black_rook)
-        elif tile.type == "Knight":
+        elif tile.type == "Knight":  # Knights
             if tile.color == "White":
                 piece.shape(white_knight)
             else:
                 piece.shape(black_knight)
-        elif tile.type == "Bishop":
+        elif tile.type == "Bishop":  # Bishops
             if tile.color == "White":
                 piece.shape(white_bishop)
             else:
                 piece.shape(black_bishop)
-        elif tile.type == "Queen":
+        elif tile.type == "Queen":  # Queens
             if tile.color == "White":
                 piece.shape(white_queen)
             else:
                 piece.shape(black_queen)
-        else:
+        else:  # Kings
             if tile.color == "White":
                 piece.shape(white_king)
             else:
                 piece.shape(black_king)
-        piece.stamp()
+
+        piece.stamp()  # Places the image of the piece
 
     # Writer changes
     writer.undo()
@@ -178,6 +202,13 @@ def draw_board(window, artist, piece, writer, board):
 
 
 def get_location(window, artist):
+    """
+    Gets the location of the mouse click for the gui program
+    :param Window window: The window in which to grab the mouse location
+    :param Turtle artist: The turtle which uses the information
+    :return: location of the mouse click
+    :rtype: int
+    """
     window.onscreenclick(artist.goto)
     window.update()
     x, y = artist.xcor(), artist.ycor() + 50
@@ -187,20 +218,34 @@ def get_location(window, artist):
     return location
 
 
-def Draw_Square(turtle, x, y, width, color):
-    turtle.seth(0)
-    turtle.penup()
-    turtle.goto(x, y)
-    turtle.pendown()
-    turtle.color(color)
-    turtle.begin_fill()
+def draw_square(tom, x, y, width, color):
+    """
+    Draws the empty squares for the board
+    :param Turtle tom: Turtle which draws the squares
+    :param int x: The x location of the square
+    :param int y: The y location of the square
+    :param int width: The length of a side of the square
+    :param str color: The color of the square
+    """
+    tom.seth(0)
+    tom.penup()
+    tom.goto(x, y)
+    tom.pendown()
+    tom.color(color)
+    tom.begin_fill()
     for i in range(4):
-        turtle.fd(width)
-        turtle.left(90)
-    turtle.end_fill()
+        tom.fd(width)
+        tom.left(90)
+    tom.end_fill()
 
 
 def check_winner(board):
+    """
+    Determines if there is a winner in the game
+    :param Board board: The game being checked
+    :return: The winning player
+    :rtype: Player
+    """
     kings = []
     for space in board.board:
         if type(space) == King:
@@ -217,6 +262,11 @@ class Board:
     """ Initializes the game board, tracks each player's moves, and monitors the status of the chess game."""
 
     def __init__(self, player1, player2):
+        """
+        Init of the Board class
+        :param Player player1: Player 1 of the game
+        :param Player player2: Player 2 of the game
+        """
         self.player1 = player1
         self.player2 = player2
         self.__current_player = player1
@@ -265,15 +315,26 @@ class Board:
 
     @property
     def current_player(self):
+        """
+        Read only current player property
+        :return: current player
+        :rtype: Player
+        """
         return self.__current_player
 
     def new_turn(self):
+        """
+        Changes the current player
+        """
         if self.__current_player == self.player1:
             self.__current_player = self.player2
         else:
             self.__current_player = self.player1
 
     def print_board(self):
+        """
+        Prints the board in its current status
+        """
         print(self.board[0:8])
         print(self.board[8:16])
         print(self.board[16:24])
@@ -288,26 +349,50 @@ class Player:
     """ Tracks the properties of each player."""
 
     def __init__(self, name, color):
+        """
+        Init of the Player class
+        :param str name: The player's name
+        :param str color: The player's color
+        """
         self.__name = name
         self.__color = color
         self.__wins = 0
         self.__losses = 0
 
-    def __str__(self):
-        return self.name
-
     @property
     def name(self):
+        """
+        The read only name property
+        :return: name of the player
+        :rtype: str
+        """
         return self.__name
 
     @property
     def color(self):
+        """
+        The read only color property of the class
+        :return: The player object's color
+        :rtype: str
+        """
         return self.__color
 
+    @property
     def wins(self):
+        """
+        The read only wins property
+        :return: Player's wins
+        :rtype: int
+        """
         return self.__wins
 
+    @property
     def losses(self):
+        """
+        The read only wins property
+        :return: Player's wins
+        :rtype: int
+        """
         return self.losses()
 
 
@@ -316,7 +401,7 @@ class Pawn:
 
     def __init__(self, owner):
         """
-        Initializes a new Player with a name and a color.
+        Initializes a pawn with an owner.
         :param Player owner: The player who owns the pawn.
         """
         self.__owner = owner  # type: Player
@@ -335,10 +420,20 @@ class Pawn:
 
     @property
     def type(self):
+        """
+        The read only type of the pawn
+        :return: The type of the pawn
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the pawn
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
@@ -347,6 +442,7 @@ class Pawn:
         :param int click: The tile number of the desired space to move to (clicked tile).
         :param Board game: The game in which to move the pawn.
         :param int location: The tile number of the current location.
+        :return: If invalid move, returns string "Invalid"
         """
         pawn = game.board[location]  # type: Pawn
         if game.current_player is player and player.color is pawn.color and (click - location) % 8 == 0 and \
@@ -362,6 +458,14 @@ class Pawn:
             return good_move
 
     def check_moves(self, player, game, location):
+        """
+        Checks valid moves for the pawn
+        :param Player player: The owning player of the pawn
+        :param Board game: The hosting board
+        :param int location: The location of the pawn
+        :return: Possible moves
+        :rtype: list[int]
+        """
         good_moves = []
         pawn = game.board[location]  # type: Pawn
         for click in range(len(game.board)):
@@ -399,6 +503,7 @@ class Rook:
 
     def __init__(self, owner):
         """
+        Initializes the Rook object
         :param Player owner: The owning player
         """
         self.__owner = owner
@@ -407,16 +512,30 @@ class Rook:
 
     @property
     def type(self):
+        """
+        The read only property of the type
+        :return: That it is a rook
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The color property
+        :return: color of the rook
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """
-
-        :return:
+        Moves the Rook
+        :param Player player: The owning player of the rook
+        :param int click: The target of the move
+        :param Board game: The hosting board object
+        :param int location: The current location of the rook
+        :return: String "Invalid if the move is invalid"
         """
         if ((click - location) % 8 == 0 or abs(location // 8) == click // 8) and \
                 (game.board[click] == () or game.board[click].color != player.color):
@@ -450,18 +569,29 @@ class Knight:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the object
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the Knight
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the knight.
         :param int location: The tile number of the current location.
+        :return: Returns "Invalid" if no valid move is made
         """
         knight = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -500,18 +630,29 @@ class Bishop:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the bishop
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the bishop.
         :param int location: The tile number of the current location.
+        :return: "Invalid" if no valid move was played
         """
         bishop = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -526,6 +667,14 @@ class Bishop:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Checks for the possible moves
+        :param player:
+        :param game:
+        :param location:
+        :return: The possible moves
+        :rtype: list[int]
+        """
         good_moves = []
         king = game.board[location]  # type: King
         for click in range(len(game.board)):
@@ -559,18 +708,29 @@ class Queen:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the queen
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the queen.
         :param int location: The tile number of the current location.
+        :return: Returns "Invalid" if no valid move is detected
         """
         queen = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -586,11 +746,19 @@ class Queen:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Checks for the possible moves of the queen
+        :param Player player: The owning player
+        :param Board game: The hosting game
+        :param int location: The current location of the queen
+        :return: Possible moves
+        :rtype: list[int]
+        """
         good_moves = []
-        king = game.board[location]  # type: King
+        queen = game.board[location]  # type: Queen
         for click in range(len(game.board)):
-            if game.current_player is player and player.color is king.color and\
-                    (game.board[click] == () or game.board[click].color != king.color) and\
+            if game.current_player is player and player.color is queen.color and\
+                    (game.board[click] == () or game.board[click].color != queen.color) and\
                     (click - location) % 8 == 0 or abs(location // 8) == click // 8 or (click - location) % 9 == 0 or \
                     (click - location) % 7 == 0:
                 good_moves.append(click)
@@ -620,18 +788,29 @@ class King:
 
     @property
     def type(self):
+        """
+        The read only type property
+        :return: The type of the piece
+        :rtype: str
+        """
         return self.__type
 
     @property
     def color(self):
+        """
+        The read only color property
+        :return: The color of the king
+        :rtype: str
+        """
         return self.__color
 
     def move(self, player, click, game, location):
         """ Moves a pawn to the clicked location (rules-permitting).
         :param Player player: The player moving.
         :param int click: The tile number of the desired space to move to (clicked tile).
-        :param Board game: The game in which to move the pawn.
+        :param Board game: The game in which to move the king.
         :param int location: The tile number of the current location.
+        :return: "Invalid" if the move is not valid
         """
         king = game.board[location]
         if (game.board[click] == () or game.board[click].color != player.color) and game.current_player is player and \
@@ -647,6 +826,14 @@ class King:
             return "Invalid"
 
     def check_moves(self, player, game, location):
+        """
+        Finds the possible moves of the king
+        :param Player player: The owning player
+        :param Board game: The hosting game
+        :param int location: The current location of the king
+        :return: The possible moves
+        :rtype: list[int]
+        """
         good_moves = []
         king = game.board[location]  # type: King
         for click in range(len(game.board)):
